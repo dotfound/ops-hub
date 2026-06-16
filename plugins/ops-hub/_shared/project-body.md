@@ -31,6 +31,7 @@ The Task table at the top of the body is a rendered snapshot of the project's li
 
 - Read the project's linked Tasks (Title, Status, Due, Assignee).
 - Render a `<table>` with columns Task, Status (add Assignee if useful), one row per task, sorted sensibly (open tasks first, Done last).
+- Prefix each Status value with a status emoji, mapped by the status's Notion **colour**: gray ⚪, blue 🔵, yellow 🟡, red 🔴, green ✅. So the default statuses read `⚪ Backlog`, `🔵 To Do`, `🟡 In Progress`, `🔴 Blocked`, `✅ Done`. Mapping by colour (not name) keeps the right emoji if a status is renamed; a status whose colour isn't in the map renders without one.
 - Replace the `## Task table` section's content with the rendered table.
 
 `/tasks-create` does this only when the new tasks are linked to a project (project-less tasks have no project table to update). `/project-update` always refreshes it, alongside the status narrative.
