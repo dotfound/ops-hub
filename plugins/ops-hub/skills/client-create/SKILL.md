@@ -18,13 +18,14 @@ Then read `_shared/client-body.md` — the shared body-composition spec (sources
 ## Inputs
 
 - A client name (minimum; Company Name is the only required field) and any fixed-property details the user supplies.
+- For a migration, the richest source is the client's **existing record** (in a prior hub, a pasted doc, or a legacy page body). Locate it (search by name) or use what the user points to, and read it as the primary source, including any existing page body.
 - The body compose additionally pulls from the linked DBs and whatever sources are connected (accounting, Gmail, Calendar, Drive). Missing sources are placeholdered, not fatal.
 
 ## Process
 
 1. **Shared startup.** As above. You now hold the live Clients properties matched to their descriptions, and the `Area = Client Body` section list.
 2. **Check for an existing record.** Search Clients by name. A strong match means the client may already exist: confirm whether to proceed (they may want `/client-update`). If the match already has a managed body, stop and point to `/client-update`. No match: proceed.
-3. **Set the fixed properties.** Map the supplied data to live properties by name + description. Confirm ambiguous values; an input mapping to no known field gets the shared-startup just-in-time annotation. **Never set Lifetime Value** (derived by `/client-ltv-sync`). Leave unsupplied fields blank.
+3. **Set the fixed properties.** Map the supplied data and the migration source to live properties by name + description. Confirm ambiguous values; an input mapping to no known field gets the shared-startup just-in-time annotation; a select value that isn't a valid option gets remapped per the shared-startup writing convention. **Never set Lifetime Value** (derived by `/client-ltv-sync`). Leave unsupplied fields blank.
 4. **Compose the full body** per `_shared/client-body.md`: gather from the linked DBs and connected sources, write every `Area = Client Body` section at full depth, placeholder any section whose source is missing, and seed Manual Notes with a prompt line.
 5. **Preview.** Show the proposed properties and the full body markdown in chat, fenced, plus a one-line note of which sources were used. Write nothing yet.
 6. **On approval, write.** Create the Clients row (`notion-create-pages`) with the properties, then write the body (`notion-update-page`). Revise and re-preview on request; do not write until approved.

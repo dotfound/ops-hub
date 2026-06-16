@@ -40,6 +40,7 @@ The hub is shaped openly: the user may rename fields, add their own, or drop one
 - **Match by name + description, never by column position.**
 - **On genuine ambiguity, confirm with the user. Do not guess.**
 - **Required anchors may be renamed but not deleted.** Everything else is open.
+- **Writing a select/status value:** it must be one of the property's existing options (from introspection). If the source data uses a value that isn't an option (common when migrating from a differently-configured system), map it to the nearest valid option, preserve the original wording in a free-text field or the body, and surface the mapping in the preview. Do not create new options unless the user approves.
 
 ## Notion tools this routine uses
 
