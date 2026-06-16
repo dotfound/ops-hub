@@ -42,7 +42,7 @@ Full detail in `references/first-setup.md`. The sequence, in order:
 4. **Connect + discover** — the guided "where does each kind of client context live for you today?" conversation; bin each named source connector-backed (probe + conduct-connect) or manual/paste; assemble a light source inventory.
 5. **Shaping interview** — per-DB recommend-and-adjust walk (Clients → Projects → Tasks → Pipeline → body sections). See `references/shaping-and-amend.md`.
 6. **Amend** — batch every delta, one preview, write on approval. See `references/shaping-and-amend.md`.
-7. **Open the New Client form to public** — set `FORM ANONYMOUS true`; the API can't read this back, so set-then-ask-the-user-to-confirm.
+7. **Open the New Client form to public** — a guided manual step: walk the user through the Notion UI to make the form submittable by anyone with the link, then confirm by eye. Not an API write.
 8. **Clear the demo seed** — find the 🤖 seed client and its related records structurally, preview, archive on approval. First-setup only.
 9. **Write the marker** — flip `Setup Status` to `setup-complete`; record Hub Name, Sources, Setup Date in the `Area = System` rows.
 10. **Confirm + handoff** — recap, then offer to chain into `/client-create` for the first real client.
@@ -53,10 +53,10 @@ Targeted, not the full walk. Ask "what would you like to change?", resolve the a
 
 ## Conduct vs perform
 
-Only three things this skill cannot do itself, so it *conducts* them (instruct, wait, re-probe) rather than performing:
+Three things this skill cannot do itself, so it *conducts* them (instruct, wait, confirm) rather than performing:
 - **The user duplicating the template** — their one click; never automated (automating it abandons the spiked published-template relation-remap).
 - **OAuth consent** — a hard security boundary; a skill can't click an OAuth screen.
-- **Possibly the form-permission toggle** — set via the API, but if that path fails, conduct the one-click manual version.
+- **Making the New Client form public** — a guided manual toggle in the Notion UI; the form's sharing state isn't reliably set-and-verified through the API, so the user makes it submittable-by-anyone and confirms by eye.
 
 Everything else it **performs** directly (relation repair, schema amend, seed archive, marker + inventory writes, descriptions, view adjustments), preview-first where destructive.
 

@@ -40,11 +40,16 @@ Walk the schema with the user so they reshape the default to their own. Per-DB, 
 
 Apply every collected delta in one batched, previewed write. Propagation rules and the type / formula handling are in `shaping-and-amend.md`. Write only on approval.
 
-## 7. Open the New Client form to public
+## 7. Open the New Client form to public (guided manual step)
 
-The template's New Client form ships **workspace-members-only** (so the public template can't be spammed). In the user's own hub it must accept external submissions. Set it via the view DSL on the Clients "New client form" view: `FORM ANONYMOUS true` (alongside `FORM OPEN` and an appropriate `FORM PERMISSIONS`) through `notion-update-view`.
+The template's New Client form ships **workspace-members-only** (so the public template can't be spammed). In the user's own hub it must accept external submissions, or future clients can't self-serve their intake. This is a **conducted manual step, not an API write**: the form's sharing state isn't reliably set-and-verified through the API end-to-end (the toggle is settable but not readable back, and a separate publish-to-web step may also be needed), so the user makes the change in the Notion UI and confirms it by eye.
 
-**The API sets this but cannot read it back** (`fetch` omits form sharing state). So after setting it, **ask the user to confirm** the form is publicly submittable (a cheap visual check: open the form's share link in a private window), rather than asserting success. One thing to eyeball once on a real setup: whether `ANONYMOUS true` alone equals "anyone with the link can submit", or a separate publish-to-web step is also needed. If the DSL write fails, conduct the one-click manual toggle instead.
+Guide the user through it:
+- Open the Clients DB **"New client form"** view and open its share / publish settings.
+- Enable submissions from **anyone with the link** (turn on link sharing / publish-to-web for the form, however Notion's current UI presents it).
+- **Confirm it works:** open the form's share link in a private / incognito window and check it's submittable. A test submission should create a Clients row, which can be archived afterwards.
+
+Wait for the user to do it and confirm before moving on. Never assert the form is public; rely on their visual confirmation.
 
 ## 8. Clear the demo seed
 
