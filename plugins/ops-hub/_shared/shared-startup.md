@@ -13,12 +13,15 @@ The hub is shaped openly: the user may rename fields, add their own, or drop one
    - **Then, by its distinctive stores.** If the name search returns zero or several, search instead for the stores `⚙️ Hub Config` and `🧠 Skill Notes` — distinctive, collision-resistant names — and walk up to their shared parent page. Also try a looser contains-match on the parent name (a hub renamed with a prefix/suffix, e.g. `[TEST] Notion Operations Hub`). Exactly one parent resolving this way → use it.
    - **Otherwise, ask.** If resolution is still zero or ambiguous, ask the user which page is their hub. Never guess.
    - **Confirm before trusting.** However the hub was found, verify the parent page actually contains the expected children (the four DBs + both stores) before proceeding; a page missing them is the wrong page — fall back to asking. (This is also why resolution keys off searchable names, not a stored ID: you must find the hub before you can read anything inside it, so there is no non-circular ID to bootstrap from.)
+   - **Refine with the durable anchor.** Once inside, the `(System, Hub Name)` row in `⚙️ Hub Config` (written by `/hub-configure` at setup) is the hub's recorded name. Use it to *confirm* you have the right hub and to disambiguate a noisy name search — but it is a refinement, never the primary locator (the circularity above still holds: find the hub, then read the anchor). `/hub-configure` keeps the stores' distinctive names reserved so this bootstrap stays robust.
    - From the parent page, list its child databases and identify the six by name/role: Clients, Projects, Pipeline, Tasks, plus the two stores `⚙️ Hub Config` and `🧠 Skill Notes`.
    - Capture the resolved IDs **for this run only**. Never store them between runs (they differ per hub and can change).
 
 2. **Read the semantic store (`⚙️ Hub Config`).**
    - Fetch every row. Each is `(Area, Name, Description)`; Area disambiguates fields that share a name across DBs (e.g. `Status`, `Client`, `Title`).
-   - Build a lookup keyed by `(Area, Name)` to its description. This is "what each field and section is for."
+   - **`Area = System` rows are reserved internal state, not field descriptions.** They are the hub's durable anchor and setup state — `Setup Status`, `Hub Name`, `Sources`, `Setup Date` — written and owned by `/hub-configure`. Read them to learn whether the hub is configured (see below) and to refine resolution, but **exclude them from the field lookup, the shaping walk, and the undescribed-field annotation flow**. They are not user fields; no skill describes, shapes, or annotates them.
+   - **The `Setup Status` row is the configured-flag** (tri-state): a value of `setup-complete` means the hub is fully stood up; `in-progress` means `/hub-configure` was interrupted mid-setup; the row being **absent** means the hub has never been configured. Ordinary skills only need: row present and `setup-complete` → proceed normally; otherwise the hub may be unconfigured or half-configured, so if an anchor is also missing, point the user to `/hub-configure`. Acting on the tri-state is `/hub-configure`'s job.
+   - Build the field lookup keyed by `(Area, Name)` to its description from the remaining (non-System) rows. This is "what each field and section is for."
 
 3. **Introspect each database live.**
    - For each DB the skill will touch, fetch its current property schema (property names + types) from Notion. This reflects the user's hub as it is right now, including their renames and additions.
@@ -55,7 +58,10 @@ The hub is shaped openly: the user may rename fields, add their own, or drop one
 - `notion-update-data-source` — amend schema (add/rename a property). `/hub-configure` only.
 - `notion-create-view` — create a saved view. `/hub-configure` only.
 
+## Settled design points
+
+- **Durable hub anchor — SETTLED (2026-06-16, building `/hub-configure`).** Resolution (step 1) keys off searchable names — parent title, then the distinctive `⚙️ Hub Config` / `🧠 Skill Notes` stores, then ask — which is robust to a renamed parent and fail-safe, but name-based by necessity (you must find the hub before reading anything in it). `/hub-configure` makes this as stable as possible by reserving the stores' distinctive names and recording the chosen hub name (plus the tri-state setup state) in the `Area = System` rows of `⚙️ Hub Config`. The spine reads `(System, Hub Name)` to *refine* an ambiguous search (step 1) and `(System, Setup Status)` to know the hub is configured (step 2). The anchor refines resolution; it never replaces the name-based bootstrap.
+
 ## Open design points (settle as we build)
 
-- **Durable hub anchor (for `/hub-configure`).** Resolution (step 1) keys off searchable names — parent title, then the distinctive `⚙️ Hub Config` / `🧠 Skill Notes` stores, then ask — which is robust to a renamed parent and fail-safe, but still name-based by necessity (you must find the hub before reading anything in it). `/hub-configure` should make this as stable as possible: keep the stores' distinctive names reserved, and optionally record the chosen hub name in a Hub Config "system" row the spine can read to refine its search. Settle the exact mechanism when building `/hub-configure`.
 - **Exact Skill Notes query** (tag filter vs fetch-all-then-filter). The template ships frozen tag options; confirm the cheaper path at build time.
