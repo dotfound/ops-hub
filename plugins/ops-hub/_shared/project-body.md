@@ -25,6 +25,16 @@ Beneath it, a **summary structured on the standard SOW format** (sections 1-8), 
 
 `/project-create` builds this from an **explicit, provided brief**: a written briefing, an SOW document, or a doc / file the user points to (including a Drive link the user gives). It does NOT scan Gmail, Drive, or other sources for context. If the brief doesn't supply a section (it isn't in SOW format, or omits one), fill what you can and **ask the user** for the missing pieces rather than inventing them; an unfilled section gets a short placeholder.
 
+## The Task table (shared rendering)
+
+The Task table at the top of the body is a rendered snapshot of the project's linked Tasks. Both `/tasks-create` (after it adds tasks to a project) and `/project-update` render it the same way:
+
+- Read the project's linked Tasks (Title, Status, Due, Assignee).
+- Render a `<table>` with columns Task, Status, Due (add Assignee if useful), one row per task, sorted sensibly (open tasks first, Done last).
+- Replace the `## Task table` section's content with the rendered table.
+
+`/tasks-create` does this only when the new tasks are linked to a project (project-less tasks have no project table to update). `/project-update` always refreshes it, alongside the status narrative.
+
 ## Create vs update (the contract)
 
 - `/project-create` writes the project row (properties) + the full body from the brief.
