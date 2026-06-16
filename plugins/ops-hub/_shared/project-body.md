@@ -39,7 +39,7 @@ The Task table at the top of the body is a rendered snapshot of the project's li
 ## Create vs update (the contract)
 
 - `/project-create` writes the project row (properties) + the full body from the brief.
-- `/project-update` refreshes the **Task table** and a short status narrative from the linked Tasks, and refreshes the summary only if asked; it preserves any section the user has flagged as manual. (Mirrors the client create/update split.)
+- `/project-update` does two things, and nothing more: (a) **reconciles the Task table** from the linked Tasks (updates statuses, adds any new tasks, via the shared rendering routine above); and (b) **when the project is in progress** (at least one task with a status other than Backlog), adds or refreshes a **Next steps** section and a **Work so far** summary just below the Task table. The Work-so-far summary is drawn from the tasks' Notion **comments** and the client's **emails** (so, unlike `/project-create`, `/project-update` may read those sources). It does **not** rewrite the SOW summary sections or change the project's properties. Section order (Next steps vs Work so far) is the user's call.
 
 ## Notion page-body markdown
 
