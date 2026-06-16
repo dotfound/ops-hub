@@ -1,13 +1,13 @@
 ---
 name: tasks-create
-description: Use when turning any text into tasks in the Ops Hub, e.g. the user says "create tasks for X", "turn this into tasks", "add these to-dos for X", "capture actions from this", "/tasks-create", or pastes a transcript, Slack thread, email, or notes and wants the action items captured. Writes Tasks rows linked to the client and its project. Not for creating clients or projects (those are /client-create and /project-create), and not for refreshing existing tasks.
+description: Use when turning a provided text into tasks in the Ops Hub, e.g. the user says "create tasks for X", "turn this transcript into tasks", "turn this brief into tasks", "add these to-dos for X", "capture actions from this", "/tasks-create", or pastes a call transcript, a dictated or written brief, or notes and wants the action items captured. Works only from the text the user gives it. Writes Tasks rows linked to the client and its project. Not for creating clients or projects (those are /client-create and /project-create), and not for refreshing existing tasks.
 ---
 
 # tasks-create
 
-Takes any text (a transcript, a Slack paste, an email body, or free prose) and creates Tasks rows in the hub, each linked to the right client and, where one applies, its project, so the task rolls into that project's task table. The input contract is deliberately broad, not meeting-bound.
+Takes a provided text (a call transcript, a dictated or written brief, or pasted notes) and creates Tasks rows in the hub, each linked to the right client and, where one applies, its project, so the task rolls into that project's task table. The input is deliberately broad about the *kind* of text, but the text is always supplied by the user. Unlike `/client-create` and `/client-update`, this skill does NOT scan Gmail, Drive, or other connected sources to find work; it parses only the text it's given.
 
-**Core principle:** extract the genuinely actionable items from messy input, link them correctly, preview, and write only on approval. Capture what's there; never pad the list with invented tasks.
+**Core principle:** extract the genuinely actionable items from the supplied text, link them correctly, preview, and write only on approval. Capture what's there; never pad the list with invented tasks.
 
 ## Before you start
 
@@ -15,8 +15,8 @@ Run shared startup first: read and follow `_shared/shared-startup.md` (in the pl
 
 ## Inputs
 
-- The **text** to mine (pasted, or pointed to).
-- The **client** it relates to (named or inferable from the text). Every task links to a client.
+- The **text** to work from, supplied by the user: a call transcript, a dictated or written brief, or pasted notes. This skill does not gather from Gmail, Drive, or other sources; it parses only this text.
+- The **client** the tasks relate to (named, or inferable from the text). Every task links to a client. Resolving the client by name against the Clients DB is fine; that is hub lookup, not source-scanning.
 - Optionally the **project** the tasks belong to. If not given, resolve the client's obvious active project or ask; a task with no project is allowed (a general client task).
 
 ## Process
@@ -42,6 +42,7 @@ Run shared startup first: read and follow `_shared/shared-startup.md` (in the pl
 ## What this does NOT do
 
 - Create clients or projects (that is `/client-create`, `/project-create`).
+- Scan Gmail, Drive, or other connected sources to find tasks. It works only from the provided text (source-gathering is `/client-create` and `/client-update`'s pattern, not this skill's).
 - Update or refresh existing tasks (this creates new rows only).
 - Refresh the project body or its task table narrative (that is `/project-update`).
 
