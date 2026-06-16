@@ -7,6 +7,8 @@ description: Use when turning a provided text into tasks in the Ops Hub, e.g. th
 
 Takes a provided text (a call transcript, a dictated or written brief, or pasted notes) and creates Tasks rows in the hub, each linked to the right client and, where one applies, its project, so the task rolls into that project's task table. The input is deliberately broad about the *kind* of text, but the text is always supplied by the user. Unlike `/client-create` and `/client-update`, this skill does NOT scan Gmail, Drive, or other connected sources to find work; it parses only the text it's given.
 
+It creates tasks for **your side only** (your team's actionable work). Commitments the client makes on the call are not tasks; they are captured as **dependencies at the project level** (the project body), not as Tasks rows.
+
 **Core principle:** extract the genuinely actionable items from the supplied text, link them correctly, preview, and write only on approval. Capture what's there; never pad the list with invented tasks.
 
 ## Before you start
@@ -23,9 +25,9 @@ Run shared startup first: read and follow `_shared/shared-startup.md` (in the pl
 
 1. **Shared startup.** As above. You now hold the live Tasks schema (Status options, relations, optional fields) matched to their descriptions.
 2. **Resolve the client and project.** Search Clients by name (ask if ambiguous; if none, offer `/client-create` or confirm proceeding without). For the project: use the one named, else look at the client's projects and propose the obvious active one, else leave the task project-less.
-3. **Extract tasks.** Read the text and pull out the discrete, actionable items. Each becomes a concise, action-first Title plus whatever the text gives (a due date, an owner, a status hint). Merge duplicates; drop non-actions (FYI, chit-chat). Do not invent tasks the text doesn't support.
-4. **Map each task** to the live Tasks schema: Title; Status defaults to the hub's first not-started option (introspected, do not assume a literal name); the Client relation; the Project relation when resolved; Due Date if the text gives one; Assignee if named and matchable; the Confidentiality flag if the content is sensitive. A select value that isn't a valid option gets remapped per the shared-startup writing convention.
-5. **Preview.** List the proposed tasks (Title, status, project, due, flags) in chat. Write nothing yet.
+3. **Extract your-side tasks.** Read the text and pull out the discrete, actionable items **your team owns**. Each becomes a concise, action-first Title plus whatever the text gives (a due date, a status hint). Merge duplicates; drop non-actions (FYI, chit-chat). **Client-side commitments are not tasks** — collect them separately as dependencies to record at the project level (see step 5). Do not invent tasks the text doesn't support.
+4. **Map each task** to the live Tasks schema: Title; Status defaults to the hub's first not-started option (introspected, do not assume a literal name); the Client relation; the Project relation when resolved; Due Date if the text gives one; Assignee set to the owning **workspace member** when identifiable (Assignee only accepts workspace members, so leave it blank otherwise); the Confidentiality flag if such a field exists and the content is sensitive. A select value that isn't a valid option gets remapped per the shared-startup writing convention.
+5. **Preview.** List the proposed your-side tasks (Title, status, project, due, assignee) in chat. **Separately**, list any client-side dependencies the text surfaced, noted for capture at the project level (this skill does not create them as tasks). Write nothing yet.
 6. **On approval, create the rows** (`notion-create-pages` into the Tasks data source), setting the Client and Project relations to the resolved pages. Revise and re-preview on request; do not write until approved.
 7. **Confirm** with a count and the new rows.
 
@@ -42,6 +44,7 @@ Run shared startup first: read and follow `_shared/shared-startup.md` (in the pl
 ## What this does NOT do
 
 - Create clients or projects (that is `/client-create`, `/project-create`).
+- Create tasks for client-side commitments. Those are captured as **dependencies at the project level** (the project body, via `/project-create` / `/project-update`), not as Tasks rows.
 - Scan Gmail, Drive, or other connected sources to find tasks. It works only from the provided text (source-gathering is `/client-create` and `/client-update`'s pattern, not this skill's).
 - Update or refresh existing tasks (this creates new rows only).
 - Refresh the project body or its task table narrative (that is `/project-update`).
