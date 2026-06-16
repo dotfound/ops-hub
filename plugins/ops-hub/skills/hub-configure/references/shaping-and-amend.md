@@ -23,7 +23,7 @@ Exclude the `Area = System` rows from the walk entirely — they are internal st
 ### What the user cannot shape
 
 - **Do not invite adding or deleting whole databases.** The 4 DBs are the backbone every skill resolves against. Shaping is *within* them.
-- **Required anchors are rename-only, never droppable:** each DB's title property; the Client relation on Projects / Tasks / Pipeline; Lifetime Value on Clients. If the user asks to drop one, refuse and offer a rename instead, explaining the skills depend on it.
+- **Required anchors are rename-only, never droppable:** each DB's title property and the Client relation on Projects / Tasks / Pipeline. If the user asks to drop one, refuse and offer a rename instead, explaining the skills depend on it.
 
 ## The amend: batch → preview → write
 

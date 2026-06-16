@@ -27,7 +27,7 @@ The hub is shaped openly: the user may rename fields, add their own, or drop one
    - For each DB the skill will touch, fetch its current property schema (property names + types) from Notion. This reflects the user's hub as it is right now, including their renames and additions.
 
 4. **Match live fields to descriptions by name** (within each Area). The skill now knows, for every live field, both its type and its purpose.
-   - **Anchors that must exist** (may be renamed, not removed): each DB's title property; the Client relation on Projects/Tasks/Pipeline; the Lifetime Value field on Clients (found via its description). If an anchor is genuinely missing, stop and tell the user their hub needs `/hub-configure`.
+   - **Anchors that must exist** (may be renamed, not removed): each DB's title property; the Client relation on Projects/Tasks/Pipeline. If an anchor is genuinely missing, stop and tell the user their hub needs `/hub-configure`.
 
 5. **Undescribed field? Annotate, don't block.**
    - If a live field has no Hub Config description, carry on. Note it, and at a natural point offer: "I found a field I don't have a description for: `<name>`. Suggested description from its name and values: '...'. Save it, or skip for this run?"

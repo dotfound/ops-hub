@@ -65,7 +65,7 @@ Everything else it **performs** directly (relation repair, schema amend, seed ar
 - **Branch on hub state, never identity.** Read the hub; ask when configured. Never infer the mode from who or which machine runs it.
 - **Duplicate-then-amend only.** Never build the hub or any DB from scratch; only apply deltas to the duplicated template.
 - **Never add or delete whole databases**, and never invite the user to. The 4 DBs are the backbone every skill resolves against. Shaping happens *within* them (rename the DB; rename / drop / add its fields).
-- **Required anchors are rename-only, never droppable:** each DB's title, the Client relation on Projects / Tasks / Pipeline, Lifetime Value on Clients. Refuse a drop; offer a rename.
+- **Required anchors are rename-only, never droppable:** each DB's title and the Client relation on Projects / Tasks / Pipeline. Refuse a drop; offer a rename.
 - **Batch → preview → write.** Collect every delta, show one preview, write only on explicit approval. No surprise schema writes.
 - **The marker is written last.** Never write `setup-complete` before the seed is cleared and every delta is applied. This is what makes re-run-from-top safe.
 - **`Area = System` is reserved and internal.** Only this skill writes it; it is excluded from the shaping walk and the annotation flow.

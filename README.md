@@ -7,7 +7,7 @@ Generic by design, so one repo reuses as a template across clients. All per-clie
 ## Two pieces
 
 1. **The Notion template** (published separately) holds the 4 databases, their relations, saved views, a pre-filled Hub Config semantic store, and a Skill Notes learning store. The user duplicates it into their own workspace in one click.
-2. **This plugin** (`plugins/ops-hub/`) is the skills that operate the hub. `/hub-configure` is the setup conductor; the rest are create/update pairs per object, plus a scheduled lifetime-value sync.
+2. **This plugin** (`plugins/ops-hub/`) is the skills that operate the hub. `/hub-configure` is the setup conductor; the rest are create/update pairs per object.
 
 ## Structure
 
@@ -15,7 +15,6 @@ Generic by design, so one repo reuses as a template across clients. All per-clie
     plugins/ops-hub/
       .claude-plugin/plugin.json         plugin manifest (version intentionally omitted)
       skills/                            the skills (one SKILL.md per skill)
-      routines/                          scheduled routines (e.g. client-ltv-sync)
       _shared/                           shared references (the locate-read-introspect spine)
 
 ## Install

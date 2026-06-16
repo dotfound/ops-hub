@@ -10,7 +10,7 @@ All of `/hub-configure`'s durable state lives in the existing `⚙️ Hub Config
 |---|---|---|
 | Setup Status | `in-progress` or `setup-complete` (the row being absent = never configured) | step 2 (in-progress), step 9 (complete) |
 | Hub Name | the hub's recorded name (the spine reads this to refine resolution) | step 9 |
-| Sources | the light source inventory, e.g. `Gmail, Drive, Xero (connected) · Trello, spreadsheet (manual)` | step 9 |
+| Sources | the light source inventory, e.g. `Gmail, Drive (connected) · Trello, spreadsheet (manual)` | step 9 |
 | Setup Date | the date setup completed | step 9 |
 
 These four are the only System rows. They are **internal**: every other skill reads them (the spine does, for mode-awareness and the durable anchor) but none writes, shapes, describes, or annotates them. Only `/hub-configure` writes here.

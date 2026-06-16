@@ -24,7 +24,6 @@ Default set shipped in the template: Contacts, Engagement Overview, Engagement H
 Gather in parallel where independent. A dead or absent source renders its section with an explicit placeholder; never abort the whole skill over one missing source.
 
 - **Linked Notion DBs** — Projects, Tasks, Pipeline, filtered by the Client relation.
-- **Accounting connector** — invoice history and last-invoice date (Engagement Overview / History). If absent, fall back to the Lifetime Value and invoice-date properties if set, else placeholder.
 - **Gmail** — recent client threads (themes, last interactions).
 - **Calendar** — recent client meetings.
 - **Drive** — the client's folder (from the Drive Folder URL property).
@@ -33,8 +32,8 @@ Gather in parallel where independent. A dead or absent source renders its sectio
 ## Composing each section
 
 - **Contacts** — a table of people at the client (from supplied data + email signatures), role + notes. Mark the primary.
-- **Engagement Overview** — mechanical: status, in-flight projects, open pipeline, active task count, last invoice, lifetime value.
-- **Engagement History** — completed projects and their values (accounting), most recent first, plus a 2-3 sentence factual arc.
+- **Engagement Overview** — mechanical: status, in-flight projects, open pipeline, active task count.
+- **Engagement History** — completed projects and their values (from the Projects DB Fee), most recent first, plus a 2-3 sentence factual arc.
 - **Setup & Tooling** and **Tech Stack & Tools** — inferred from Drive docs, email signatures, supplied data. Thin signal renders one italic "add as you learn" line.
 - **Communications Log** — recent themes (3-5 one-line bullets) + a table of the last ~5 interactions (Gmail threads + meetings), most recent first.
 - **Opportunities & Risks** — composed from everything gathered. Quieter is fine; render an italic "none surfaced" line for an empty side.

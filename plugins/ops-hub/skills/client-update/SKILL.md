@@ -24,7 +24,7 @@ Then read `_shared/client-body.md` — the shared body-composition spec. It gove
 1. **Shared startup.** As above. You now hold the live Clients properties matched to their descriptions, and the `Area = Client Body` section list.
 2. **Resolve the client.** Search Clients by name. One match: use it. Several: ask which. None: stop and point to `/client-create`.
 3. **Read the current body.** Fetch the client page. Identify the never-overwrite section (the `Area = Client Body` row whose description says the refresh never touches it) and capture its content verbatim, to splice back unchanged. If that section is absent from the current body, there is nothing to preserve; seed a fresh empty one.
-4. **Recompose the living sections** per `_shared/client-body.md`: gather from the linked DBs and connected sources, and rebuild every *other* `Area = Client Body` section at full depth. Placeholder any section whose source is missing. While gathering, also note any **fixed property** the sources show to be blank-but-now-known or clearly out of date, and collect these as proposed property corrections (never Lifetime Value).
+4. **Recompose the living sections** per `_shared/client-body.md`: gather from the linked DBs and connected sources, and rebuild every *other* `Area = Client Body` section at full depth. Placeholder any section whose source is missing. While gathering, also note any **fixed property** the sources show to be blank-but-now-known or clearly out of date, and collect these as proposed property corrections.
 5. **Reassemble** the body: the freshly composed sections in Hub Config order, with the preserved never-overwrite section spliced back into its place, unchanged.
 6. **Preview.** Show the proposed new body in chat, fenced. **Separately**, list any proposed property corrections, each as `current -> proposed` with its source. State plainly that the never-overwrite section is preserved verbatim, that every other section is regenerated, and that no property changes without explicit approval. Write nothing yet.
 7. **On approval, write.** Write the body (`notion-update-page`, `replace_content`, `allow_deleting_content: true` — client bodies hold no child pages). Apply only the property corrections the user explicitly approved (`update_properties`); approve none and the properties are left untouched. Revise and re-preview on request; do not write until approved.
@@ -33,7 +33,7 @@ Then read `_shared/client-body.md` — the shared body-composition spec. It gove
 ## Hard rules
 
 - **Resolve everything live via shared startup. Never hardcode Notion IDs.**
-- **Never auto-update properties.** The body is written freely; properties change ONLY for the fields the user explicitly approves from the proposed-corrections list. Never propose or write **Lifetime Value** (that is `/client-ltv-sync`).
+- **Never auto-update properties.** The body is written freely; properties change ONLY for the fields the user explicitly approves from the proposed-corrections list.
 - **Preserve the never-overwrite section verbatim.** Identify it by its description, not a hardcoded name. Never edit, reorder, or drop anything inside it.
 - **Preview before any write; write only on explicit approval.**
 - **Tolerate per-source failure** — a missing connector placeholders its section; never abort the whole run.
@@ -45,7 +45,7 @@ Then read `_shared/client-body.md` — the shared body-composition spec. It gove
 ## What this does NOT do
 
 - Create a new client record (that is `/client-create`).
-- Change any property without explicit approval, or ever change Lifetime Value (that is `/client-ltv-sync`).
+- Change any property without explicit approval.
 - Create or modify schema, or touch the Projects / Tasks / Pipeline DBs.
 
 ## Learning loop (after the body is refreshed)

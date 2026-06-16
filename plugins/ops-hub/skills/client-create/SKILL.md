@@ -18,13 +18,13 @@ Then read `_shared/client-body.md` — the shared body-composition spec (sources
 ## Inputs
 
 - A client name (minimum; Company Name is the only required field) and any fixed-property details the user supplies (typed, pasted, or pointed to).
-- The body compose pulls from the linked DBs and whatever sources are connected (accounting, Gmail, Calendar, Drive). It builds the picture from these plus the user's input; it does not assume a pre-existing structured record. Missing sources are placeholdered, not fatal.
+- The body compose pulls from the linked DBs and whatever sources are connected (Gmail, Calendar, Drive). It builds the picture from these plus the user's input; it does not assume a pre-existing structured record. Missing sources are placeholdered, not fatal.
 
 ## Process
 
 1. **Shared startup.** As above. You now hold the live Clients properties matched to their descriptions, and the `Area = Client Body` section list.
 2. **Check for an existing record.** Search Clients by name. A strong match means the client may already exist: confirm whether to proceed (they may want `/client-update`). If the match already has a managed body, stop and point to `/client-update`. No match: proceed.
-3. **Set the fixed properties.** Map the user's input (and anything pulled from connected sources) to live properties by name + description. Confirm ambiguous values; an input mapping to no known field gets the shared-startup just-in-time annotation; a select value that isn't a valid option gets remapped per the shared-startup writing convention. **Never set Lifetime Value** (derived by `/client-ltv-sync`), even if a figure is available. Leave unsupplied fields blank.
+3. **Set the fixed properties.** Map the user's input (and anything pulled from connected sources) to live properties by name + description. Confirm ambiguous values; an input mapping to no known field gets the shared-startup just-in-time annotation; a select value that isn't a valid option gets remapped per the shared-startup writing convention. Leave unsupplied fields blank.
 4. **Compose the full body** per `_shared/client-body.md`: gather from the linked DBs and connected sources, write every `Area = Client Body` section at full depth, placeholder any section whose source is missing, and seed Manual Notes with a prompt line.
 5. **Preview.** Show the proposed properties and the full body markdown in chat, fenced, plus a one-line note of which sources were used. Write nothing yet.
 6. **On approval, write.** Create the Clients row (`notion-create-pages`) with the properties, then write the body (`notion-update-page`). Revise and re-preview on request; do not write until approved.
@@ -34,7 +34,6 @@ Then read `_shared/client-body.md` — the shared body-composition spec (sources
 
 - **Resolve everything live via shared startup. Never hardcode Notion IDs.**
 - **Preview before any write; write only on explicit approval.**
-- **Never set Lifetime Value** — derived by `/client-ltv-sync`.
 - **Tolerate per-source failure** — a missing connector placeholders its section; never abort the whole run.
 - **Never invent client facts.** A section with no signal gets a placeholder, not a guess.
 - **First-create only.** If the client already has a managed body, stop and point to `/client-update`.
@@ -44,7 +43,7 @@ Then read `_shared/client-body.md` — the shared body-composition spec (sources
 ## What this does NOT do
 
 - Refresh an existing client's body (that is `/client-update`).
-- Change the fixed properties after creation (only `/client-ltv-sync` touches one, Lifetime Value).
+- Change the fixed properties after creation.
 - Create or modify schema, or touch the Projects / Tasks / Pipeline DBs.
 
 ## Learning loop (after the record is written)

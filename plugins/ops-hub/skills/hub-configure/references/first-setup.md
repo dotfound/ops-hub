@@ -23,14 +23,14 @@ Confirm the parent page holds the expected children: the 4 DBs (Clients, Project
 
 A guided conversation, not a silent probe. Ask the user **where each kind of client context lives for them today**, prompted by category so nothing is missed:
 
-> task tracking · client folders / files · emails · finance / invoicing · comms (chat) · calendar · in-head or spreadsheet
+> task tracking · client folders / files · emails · comms (chat) · calendar · in-head or spreadsheet
 
 For each source the user names, bin it:
 
-- **Connector-backed** (Gmail, Drive, Calendar, an accounting tool like Xero): probe with a cheap real call; if absent, **conduct-connect** it (instruct + wait + re-probe, same OAuth boundary as Notion).
+- **Connector-backed** (Gmail, Drive, Calendar): probe with a cheap real call; if absent, **conduct-connect** it (instruct + wait + re-probe, same OAuth boundary as Notion).
 - **No connector** (Trello, a spreadsheet, in-their-head): flag it a **manual / paste source** so the user knows they'll paste it into the populating skills.
 
-Only **Notion is required**; everything else follows what the user names. Assemble a **light source inventory**: a coarse `source → connected | manual` list (e.g. `Gmail, Drive, Xero (connected) · Trello, retainer spreadsheet (manual)`). This is *not* a per-field data-source map (that drifts and was retired); it is a one-line memory of what's wired up, persisted in `(System, Sources)` at step 9.
+Only **Notion is required**; everything else follows what the user names. Assemble a **light source inventory**: a coarse `source → connected | manual` list (e.g. `Gmail, Drive (connected) · Trello, retainer spreadsheet (manual)`). This is *not* a per-field data-source map (that drifts and was retired); it is a one-line memory of what's wired up, persisted in `(System, Sources)` at step 9.
 
 ## 5. Shaping interview
 
