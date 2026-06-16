@@ -8,9 +8,11 @@ The hub is shaped openly: the user may rename fields, add their own, or drop one
 
 ## The routine, in order
 
-1. **Locate the hub.**
-   - Find the hub's parent page by name (default `Notion Ops Hub`; the user may rename it). Use the Notion `search` tool.
-   - One match: use it. None or several: ask the user which page is their hub. Do not guess.
+1. **Locate the hub** (layered resolution; never guess).
+   - **First, by parent-page name.** Search (`search`) for the hub's parent page by name (default `Notion Ops Hub`; the user may have renamed it). Exactly one match → use it.
+   - **Then, by its distinctive stores.** If the name search returns zero or several, search instead for the stores `⚙️ Hub Config` and `🧠 Skill Notes` — distinctive, collision-resistant names — and walk up to their shared parent page. Also try a looser contains-match on the parent name (a hub renamed with a prefix/suffix, e.g. `[TEST] Notion Operations Hub`). Exactly one parent resolving this way → use it.
+   - **Otherwise, ask.** If resolution is still zero or ambiguous, ask the user which page is their hub. Never guess.
+   - **Confirm before trusting.** However the hub was found, verify the parent page actually contains the expected children (the four DBs + both stores) before proceeding; a page missing them is the wrong page — fall back to asking. (This is also why resolution keys off searchable names, not a stored ID: you must find the hub before you can read anything inside it, so there is no non-circular ID to bootstrap from.)
    - From the parent page, list its child databases and identify the six by name/role: Clients, Projects, Pipeline, Tasks, plus the two stores `⚙️ Hub Config` and `🧠 Skill Notes`.
    - Capture the resolved IDs **for this run only**. Never store them between runs (they differ per hub and can change).
 
@@ -55,5 +57,5 @@ The hub is shaped openly: the user may rename fields, add their own, or drop one
 
 ## Open design points (settle as we build)
 
-- **Hub name when the user renames the parent page.** Default search is `Notion Ops Hub`. If the user renames it, either `/hub-configure` records the chosen name in a Hub Config "system" row that the search reads, or skills confirm the page with the user once per run. Decide when building `/hub-configure`.
+- **Durable hub anchor (for `/hub-configure`).** Resolution (step 1) keys off searchable names — parent title, then the distinctive `⚙️ Hub Config` / `🧠 Skill Notes` stores, then ask — which is robust to a renamed parent and fail-safe, but still name-based by necessity (you must find the hub before reading anything in it). `/hub-configure` should make this as stable as possible: keep the stores' distinctive names reserved, and optionally record the chosen hub name in a Hub Config "system" row the spine can read to refine its search. Settle the exact mechanism when building `/hub-configure`.
 - **Exact Skill Notes query** (tag filter vs fetch-all-then-filter). The template ships frozen tag options; confirm the cheaper path at build time.
