@@ -1,41 +1,42 @@
 ---
 name: client-create
-description: Use when adding or migrating an existing client into the Ops Hub by hand, e.g. the user says "create client X", "add X to the hub", "migrate X", "/client-create X", or pastes a client's details to set up. First-time creation of a Clients record (row plus seeded page body). Not for refreshing an existing client (that is /client-update), and not for future clients who self-serve via the onboarding form.
+description: Use when adding or migrating an existing client into the Ops Hub by hand, e.g. the user says "create client X", "add X to the hub", "migrate X", "/client-create X", or pastes a client's details to set up. First-time creation of a Clients record: the row plus a full client body. Not for refreshing an existing client (that is /client-update), and not for future clients who self-serve via the onboarding form.
 ---
 
 # client-create
 
-Creates one Clients record in the hub from data the user supplies: the fixed properties plus a seeded page body. Mainly for migrating existing clients; future clients are created by the Notion onboarding form, then fleshed out by `/client-update`.
+Creates one Clients record in the hub: the fixed properties, plus a **full client body built to the same depth as `/client-update`**. Mainly for migrating existing clients; future clients get their row from the Notion onboarding form, then `/client-update` builds the body.
 
-**Core principle:** create from what the user gives you, preview before writing, and seed (not fully populate) the body. The living sections are `/client-update`'s job; this skill stands the record up.
+**Core principle:** create the row from supplied data, then compose the full body from the linked DBs and connected sources (per `_shared/client-body.md`), preview everything, and write only on approval. Create and update produce the same body; this skill is create-the-row plus a first full compose.
 
 ## Before you start
 
-Run shared startup first: read and follow `_shared/shared-startup.md` (in the plugin root, alongside `skills/`). It locates the hub, reads the Hub Config semantic store, live-introspects the Clients DB, and loads this skill's Skill Notes directives. Apply those directives as authoritative overrides to the steps below.
+Run shared startup first: read and follow `_shared/shared-startup.md` (in the plugin root, alongside `skills/`). It locates the hub, reads the Hub Config store, live-introspects the Clients DB, and loads this skill's Skill Notes directives. Apply those directives as authoritative overrides.
 
-Then read `_shared/client-body.md` for the body structure and Notion page-body markdown conventions.
+Then read `_shared/client-body.md` — the shared body-composition spec (sources, per-section guidance, markdown conventions). It governs the body for both client skills.
 
 ## Inputs
 
-- A client name (minimum), and any fixed-property details the user provides (paste, a pointed-to doc, or free prose). Company Name is the only required field.
-- This skill works from the supplied data only. It does not pull from Gmail, Drive, the accounting connector, or any other source (that is `/client-update`).
+- A client name (minimum; Company Name is the only required field) and any fixed-property details the user supplies.
+- The body compose additionally pulls from the linked DBs and whatever sources are connected (accounting, Gmail, Calendar, Drive). Missing sources are placeholdered, not fatal.
 
 ## Process
 
-1. **Shared startup.** As above. You now hold the live Clients properties matched to their Hub Config descriptions, and the `Area = Client Body` section list.
-2. **Check for an existing record.** Search Clients by the supplied name. A strong match means the client may already be in the hub: confirm with the user whether to proceed (they may want `/client-update` instead). If the matched record already has a managed body, stop and point to `/client-update`. No match: proceed.
-3. **Map the supplied data to live properties** by name + description. Confirm where a value is ambiguous; an input that maps to no known field gets the shared-startup just-in-time annotation (offer to describe + save it). **Never set Lifetime Value** (it is derived by `/client-ltv-sync`). Ask for any missing details the user wants to include now, but don't force it; unsupplied fields are left blank for the form or a later edit.
-4. **Compose the seeded body** per `_shared/client-body.md`: write every `Area = Client Body` section as an H2 in Hub Config order. Fill what the supplied data gives you (typically Contacts and Engagement Overview); scaffold the rest with the placeholder line; always include the never-overwrite section. Lifetime Value in Engagement Overview shows as not-yet-synced.
-5. **Preview.** Show the proposed properties and the full body markdown in chat, fenced. List what will be written and where. Write nothing yet.
-6. **On approval, write.** Create the Clients row (`notion-create-pages` into the Clients data source) with the mapped properties, then write the body (`notion-update-page`). If the user asks for changes, revise and re-preview; do not write until they approve.
+1. **Shared startup.** As above. You now hold the live Clients properties matched to their descriptions, and the `Area = Client Body` section list.
+2. **Check for an existing record.** Search Clients by name. A strong match means the client may already exist: confirm whether to proceed (they may want `/client-update`). If the match already has a managed body, stop and point to `/client-update`. No match: proceed.
+3. **Set the fixed properties.** Map the supplied data to live properties by name + description. Confirm ambiguous values; an input mapping to no known field gets the shared-startup just-in-time annotation. **Never set Lifetime Value** (derived by `/client-ltv-sync`). Leave unsupplied fields blank.
+4. **Compose the full body** per `_shared/client-body.md`: gather from the linked DBs and connected sources, write every `Area = Client Body` section at full depth, placeholder any section whose source is missing, and seed Manual Notes with a prompt line.
+5. **Preview.** Show the proposed properties and the full body markdown in chat, fenced, plus a one-line note of which sources were used. Write nothing yet.
+6. **On approval, write.** Create the Clients row (`notion-create-pages`) with the properties, then write the body (`notion-update-page`). Revise and re-preview on request; do not write until approved.
 7. **Confirm** with the new record's URL.
 
 ## Hard rules
 
 - **Resolve everything live via shared startup. Never hardcode Notion IDs.**
 - **Preview before any write; write only on explicit approval.**
-- **Never set Lifetime Value** — it is derived by `/client-ltv-sync`.
-- **Never invent client facts.** A section you can't fill gets a placeholder, not a guess.
+- **Never set Lifetime Value** — derived by `/client-ltv-sync`.
+- **Tolerate per-source failure** — a missing connector placeholders its section; never abort the whole run.
+- **Never invent client facts.** A section with no signal gets a placeholder, not a guess.
 - **First-create only.** If the client already has a managed body, stop and point to `/client-update`.
 - **`<table>` tags, never pipe tables.** Keep section anchors exact (see `_shared/client-body.md`).
 - **Refuse to write employee-level data into the hub.** The hub holds business contact info only; that data lives in the client's own systems.
@@ -43,9 +44,8 @@ Then read `_shared/client-body.md` for the body structure and Notion page-body m
 ## What this does NOT do
 
 - Refresh an existing client's body (that is `/client-update`).
-- Pull from Gmail, Drive, the accounting connector, or other sources (that is `/client-update`).
+- Change the fixed properties after creation (only `/client-ltv-sync` touches one, Lifetime Value).
 - Create or modify schema, or touch the Projects / Tasks / Pipeline DBs.
-- Set or compute Lifetime Value.
 
 ## Learning loop (after the record is written)
 
