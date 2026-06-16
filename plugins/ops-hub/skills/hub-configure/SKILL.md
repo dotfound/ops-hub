@@ -1,0 +1,90 @@
+---
+name: hub-configure
+description: Use when standing up, connecting to, or reshaping the Ops Hub, e.g. the user says "configure the hub", "set up the ops hub", "stand up the hub", "/hub-configure", "connect this machine to the hub", "I've duplicated the template", "reshape the hub", "rename a field", "add a field to the hub", or a teammate is joining and needs their own machine connected. The setup conductor for the whole plugin. Not for adding clients, projects, or tasks (those are the create skills).
+---
+
+# hub-configure
+
+The setup conductor for the Ops Hub. The hub ships as a published Notion template the user duplicates in one click; this skill does everything after that click: locates the duplicated hub, connects the user's sources, walks a shaping interview so the user reshapes the default schema to their own, applies the deltas to both the Notion schema and the Hub Config descriptions, opens the New Client form, clears the demo seed, and writes the durable marker that tells every other skill the hub is ready. Re-runnable forever to evolve the shape or connect a new machine.
+
+**Core principle:** duplicate-then-amend, never build from scratch. The structure arrives correct by duplication; this skill only applies the user's deltas on top, batched and preview-first. It branches on the *state of the shared hub*, never on who or which machine is running it. Everything it writes is reversible-by-re-run: the marker is written last, schema deltas are batched, and every step reads live and is idempotent.
+
+## Before you start
+
+Run shared startup first: read and follow `_shared/shared-startup.md` (in the plugin root, alongside `skills/`). It locates the hub, reads Hub Config (including the reserved `Area = System` rows this skill owns), introspects the DBs, and loads this skill's Skill Notes directives. Apply those directives as authoritative overrides.
+
+This is the **only** skill that mutates schema (`notion-update-data-source`), creates or adjusts views, and owns the `Area = System` namespace. Its destructive writes (schema deltas, seed archive) are always batched and preview-first.
+
+Load each reference as its phase begins, not upfront:
+- `references/system-state-and-recovery.md` — the `Area = System` rows, mode detection, and the re-run / write-failure recovery model. Read this **first**, to detect the mode.
+- `references/first-setup.md` — the full first-setup sequence (the heavy path).
+- `references/shaping-and-amend.md` — the per-DB interview and the batch → preview → write amend (shared by first-setup and reshape).
+
+## Modes — branch on hub state, never identity
+
+Detect the mode from the shared hub (per `references/system-state-and-recovery.md`), then act:
+
+- **Not configured** (no hub, or hub found with the demo seed and no `setup-complete` marker) → **first setup** (the heavy path). See `references/first-setup.md`.
+- **Configured** (`(System, Setup Status) = setup-complete`) → **ask the user which** they want:
+  - *Connect / verify this machine* (a teammate joining, or the user on a new laptop): probe + conduct-connect this machine's connectors, confirm the hub is reachable, done. No duplication, no reshape.
+  - *Evolve the shape* (a targeted reshape): see the reshape path below.
+- **Interrupted** (`(System, Setup Status) = in-progress`) → tell the user a prior setup didn't finish and offer to resume the undone tail. Re-running from the top is always safe; it reads live and reconciles.
+
+Two people sharing one Notion workspace see an identical hub: identity is undetectable and irrelevant. Never guess a mode from who is running it; read the hub, and ask when the state is "configured".
+
+## First setup (the heavy path)
+
+Full detail in `references/first-setup.md`. The sequence, in order:
+
+1. **Notion check** — probe the Notion MCP; conduct connecting it if missing (required before anything else).
+2. **Locate the hub** — shared startup; if not found, tell the user to duplicate the published template (their one click), wait, re-locate. Write `Setup Status = in-progress` once located and verified.
+3. **Verify + relation-integrity check** — confirm the 4 DBs + 2 stores; re-toggle any cross-DB relation that degraded to one-way (a safety net).
+4. **Connect + discover** — the guided "where does each kind of client context live for you today?" conversation; bin each named source connector-backed (probe + conduct-connect) or manual/paste; assemble a light source inventory.
+5. **Shaping interview** — per-DB recommend-and-adjust walk (Clients → Projects → Tasks → Pipeline → body sections). See `references/shaping-and-amend.md`.
+6. **Amend** — batch every delta, one preview, write on approval. See `references/shaping-and-amend.md`.
+7. **Open the New Client form to public** — set `FORM ANONYMOUS true`; the API can't read this back, so set-then-ask-the-user-to-confirm.
+8. **Clear the demo seed** — find the 🤖 seed client and its related records structurally, preview, archive on approval. First-setup only.
+9. **Write the marker** — flip `Setup Status` to `setup-complete`; record Hub Name, Sources, Setup Date in the `Area = System` rows.
+10. **Confirm + handoff** — recap, then offer to chain into `/client-create` for the first real client.
+
+## Reshape (configured → evolve the shape)
+
+Targeted, not the full walk. Ask "what would you like to change?", resolve the affected field or section live, then run the same amend machinery (`references/shaping-and-amend.md`): delta → preview → write → update the matching Hub Config row. The `setup-complete` marker stays. The user can ask for the full per-DB tour if they want it.
+
+## Conduct vs perform
+
+Only three things this skill cannot do itself, so it *conducts* them (instruct, wait, re-probe) rather than performing:
+- **The user duplicating the template** — their one click; never automated (automating it abandons the spiked published-template relation-remap).
+- **OAuth consent** — a hard security boundary; a skill can't click an OAuth screen.
+- **Possibly the form-permission toggle** — set via the API, but if that path fails, conduct the one-click manual version.
+
+Everything else it **performs** directly (relation repair, schema amend, seed archive, marker + inventory writes, descriptions, view adjustments), preview-first where destructive.
+
+## Hard rules
+
+- **Branch on hub state, never identity.** Read the hub; ask when configured. Never infer the mode from who or which machine runs it.
+- **Duplicate-then-amend only.** Never build the hub or any DB from scratch; only apply deltas to the duplicated template.
+- **Never add or delete whole databases**, and never invite the user to. The 4 DBs are the backbone every skill resolves against. Shaping happens *within* them (rename the DB; rename / drop / add its fields).
+- **Required anchors are rename-only, never droppable:** each DB's title, the Client relation on Projects / Tasks / Pipeline, Lifetime Value on Clients. Refuse a drop; offer a rename.
+- **Batch → preview → write.** Collect every delta, show one preview, write only on explicit approval. No surprise schema writes.
+- **The marker is written last.** Never write `setup-complete` before the seed is cleared and every delta is applied. This is what makes re-run-from-top safe.
+- **`Area = System` is reserved and internal.** Only this skill writes it; it is excluded from the shaping walk and the annotation flow.
+- **Formula expressions can't be set via the API** — create everything else, flag any formula field for a manual paste.
+- **Verify-and-report on any write failure; never claim false success.** Notion has no transactions, so there is no rollback: report exactly what landed and let a re-run reconcile.
+- **First-setup-only steps stay first-setup-only:** clearing the seed never runs on a configured hub.
+
+## What this does NOT do
+
+- Populate content (no clients, projects, or tasks), except the optional `/client-create` handoff at the end.
+- Build the hub from scratch, or manage / republish the published template.
+- Add or delete whole databases.
+- Touch real client data when clearing the seed (it is marker-based, demo records only).
+
+## Learning loop (after setup or a reshape is written)
+
+Reflect silently: did anything this run reveal a repeatable improvement to how this skill works (a better interview default, a delta that propagated awkwardly, a connector probe that tripped, a missing check)? Count only generalisable process tweaks, not facts about this one hub.
+
+- Found nothing? Say nothing.
+- Found one or more? Offer: "I noticed N possible improvement(s): [each as a one-line directive]. Save any to the hub's Skill Notes? (pick which, or none)."
+
+On approval, write each as a new row in the `🧠 Skill Notes` DB, tagged `hub-configure` (or `global` if it applies to every skill). Never write without approval. Never edit this SKILL.md.

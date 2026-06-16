@@ -1,0 +1,72 @@
+# First setup — the heavy path
+
+The full first-setup sequence for `/hub-configure`. Run only when mode detection (see `system-state-and-recovery.md`) finds the hub **not configured**. Each step reads live and is idempotent, so re-running from the top is safe (the marker, written last, is the only commit point).
+
+## 1. Notion check
+
+Probe the Notion MCP with a cheap real call (e.g. a `search`). If it fails or isn't connected, **conduct** connecting it: a skill can't click OAuth, so instruct the user to connect Notion in their Cowork connectors, wait, and re-probe. Notion is the one structurally required connector; nothing below works without it.
+
+## 2. Locate the hub
+
+Run the shared-startup locate routine. Two outcomes:
+
+- **Found, with a `setup-complete` marker** → this isn't first setup; switch to the configured branch (ask connect-vs-reshape).
+- **Not found** → the user hasn't duplicated the template yet. Tell them to duplicate the published template into their workspace (their one click; **not** automated, because the published-template flow is what preserves the relation-remap). Wait, then re-locate. If still not found, help them check the duplication landed in this workspace.
+
+Once located and verified (step 3), **write `(System, Setup Status) = in-progress`** (adding the `System` Area option first if absent, per `system-state-and-recovery.md`). This is the only early write; it marks setup as started so an interrupted run is recognisable.
+
+## 3. Verify + relation-integrity check
+
+Confirm the parent page holds the expected children: the 4 DBs (Clients, Projects, Tasks, Pipeline) + both stores (⚙️ Hub Config, 🧠 Skill Notes). Then check the cross-DB relations are two-way (Clients ↔ Projects, Clients ↔ Tasks, Clients ↔ Pipeline, Projects ↔ Tasks). The duplication spike passed, so they should be intact; this is a safety net. If one degraded to one-way, **re-establish it** via `notion-update-data-source` (`RELATION(ds_id, DUAL 'synced_name')`). Surface any repair in the eventual preview.
+
+## 4. Connect + discover
+
+A guided conversation, not a silent probe. Ask the user **where each kind of client context lives for them today**, prompted by category so nothing is missed:
+
+> task tracking · client folders / files · emails · finance / invoicing · comms (chat) · calendar · in-head or spreadsheet
+
+For each source the user names, bin it:
+
+- **Connector-backed** (Gmail, Drive, Calendar, an accounting tool like Xero): probe with a cheap real call; if absent, **conduct-connect** it (instruct + wait + re-probe, same OAuth boundary as Notion).
+- **No connector** (Trello, a spreadsheet, in-their-head): flag it a **manual / paste source** so the user knows they'll paste it into the populating skills.
+
+Only **Notion is required**; everything else follows what the user names. Assemble a **light source inventory**: a coarse `source → connected | manual` list (e.g. `Gmail, Drive, Xero (connected) · Trello, retainer spreadsheet (manual)`). This is *not* a per-field data-source map (that drifts and was retired); it is a one-line memory of what's wired up, persisted in `(System, Sources)` at step 9.
+
+## 5. Shaping interview
+
+Walk the schema with the user so they reshape the default to their own. Per-DB, recommend-and-adjust: Clients → Projects → Tasks → Pipeline → then the client and project body sections. Full mechanics in `shaping-and-amend.md`. Collect deltas; write nothing yet.
+
+## 6. Amend
+
+Apply every collected delta in one batched, previewed write. Propagation rules and the type / formula handling are in `shaping-and-amend.md`. Write only on approval.
+
+## 7. Open the New Client form to public
+
+The template's New Client form ships **workspace-members-only** (so the public template can't be spammed). In the user's own hub it must accept external submissions. Set it via the view DSL on the Clients "New client form" view: `FORM ANONYMOUS true` (alongside `FORM OPEN` and an appropriate `FORM PERMISSIONS`) through `notion-update-view`.
+
+**The API sets this but cannot read it back** (`fetch` omits form sharing state). So after setting it, **ask the user to confirm** the form is publicly submittable (a cheap visual check: open the form's share link in a private window), rather than asserting success. One thing to eyeball once on a real setup: whether `ANONYMOUS true` alone equals "anyone with the link can submit", or a separate publish-to-web step is also needed. If the DSL write fails, conduct the one-click manual toggle instead.
+
+## 8. Clear the demo seed
+
+The template ships a 🤖-marked demo seed (a `🤖`-prefixed client + its related project, tasks, and a pipeline item) so relations and views render on duplication. Clear it now, **first-setup only**:
+
+- Find the seed **structurally**: locate the `🤖`-prefixed seed client, then walk its relations to gather the linked project, tasks, and pipeline item. Don't match on hardcoded names or IDs.
+- **Preview** the exact records to be removed.
+- On approval, **archive** them (Notion trash, recoverable). Never hard-delete, and never touch any post-duplication record the user may have already added.
+
+This runs only when the marker is absent (mode detection gates it). It never runs on a configured hub.
+
+## 9. Write the marker
+
+The commit point. Write the four `Area = System` rows (per `system-state-and-recovery.md`):
+
+- Flip `(System, Setup Status)` from `in-progress` to **`setup-complete`** (update in place).
+- Write `(System, Hub Name)` = the hub's name.
+- Write `(System, Sources)` = the light inventory from step 4.
+- Write `(System, Setup Date)` = today.
+
+Order matters: seed cleared (step 8) **then** marker (step 9), so "marker present" always means fully set up and seed gone.
+
+## 10. Confirm + handoff
+
+Recap what changed: the renames / additions applied, the form opened (pending the user's visual confirm), the seed cleared, the sources wired up. Then **offer to chain into `/client-create`** for the user's first real client, so setup flows straight into first use.
