@@ -1,0 +1,8 @@
+.DS_Store
+
+# Claude Code per-session worktrees (not part of the plugin source)
+.claude/worktrees/
+
+# Runtime logs and caches must never live inside skill folders
+*.log
+__pycache__/

@@ -1,0 +1,8 @@
+{
+  "name": "ops-hub",
+  "description": "Sets up and operates a client-centric Notion operations hub: clients, projects, tasks, pipeline, and living client/project context pages. Manifest-driven skills read a Notion-resident semantic store plus live introspection before acting. Includes /hub-configure (the setup conductor), create/update skill pairs per object, and a scheduled lifetime-value sync routine. Not a CRM: a broader operations hub.",
+  "author": {
+    "name": "dotfound",
+    "email": "graham@dotfound.co.uk"
+  }
+}
