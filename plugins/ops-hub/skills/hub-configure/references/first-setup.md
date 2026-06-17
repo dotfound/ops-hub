@@ -1,6 +1,6 @@
 # First setup — the heavy path
 
-The full first-setup sequence for `/hub-configure`. Run only when mode detection (see `system-state-and-recovery.md`) finds the hub **not configured**. Each step reads live and is idempotent, so re-running from the top is safe (the marker, written last, is the only commit point).
+The full first-setup sequence for `/hub-configure`. Run only when mode detection (see `system-state-and-recovery.md`) finds the hub **not configured**. Each step reads live and is idempotent, and nothing is written until the user approves the amend (step 6), so re-running from the top is always safe.
 
 ## 1. Notion check
 
@@ -13,7 +13,7 @@ Run the shared-startup locate routine. Two outcomes:
 - **Found, with a `setup-complete` marker** → this isn't first setup; switch to the configured branch (ask connect-vs-reshape).
 - **Not found** → the user hasn't duplicated the template yet. Tell them to duplicate the published template into their workspace (their one click; **not** automated, because the published-template flow is what preserves the relation-remap). Wait, then re-locate. If still not found, help them check the duplication landed in this workspace.
 
-Once located and verified (step 3), **write `(System, Setup Status) = in-progress`** (adding the `System` Area option first if absent, per `system-state-and-recovery.md`). This is the only early write; it marks setup as started so an interrupted run is recognisable.
+Locating and verifying **writes nothing**; the hub is only read here. Setup is not marked started, and no schema is touched, until the commit (step 6), after the user has been through discovery and shaping and approved the amend preview. (The `System` Area option ships in the template, so there is nothing to add here.)
 
 ## 3. Verify + relation-integrity check
 
@@ -38,7 +38,13 @@ Walk the schema with the user so they reshape the default to their own. Per-DB, 
 
 ## 6. Amend
 
-Apply every collected delta in one batched, previewed write. Propagation rules and the type / formula handling are in `shaping-and-amend.md`. Write only on approval.
+This is the **first write of the whole run**: steps 1 to 5 (orientation, connect, shaping) are all read-and-talk, and nothing has touched the hub yet. Show the single preview, then write **only on the user's explicit approval**. On approval, the commit batch runs in order:
+
+1. **Defensive only:** the `System` Area option ships in the template, but if it is somehow absent (an old duplicate, or a deleted option), add it now via `notion-update-data-source`.
+2. **Write `(System, Setup Status) = in-progress`**, marking setup started so an interruption during the commit is recoverable.
+3. **Apply every collected delta.** Propagation rules and the type / formula handling are in `shaping-and-amend.md`.
+
+If the user bails before approving, nothing has been written and a re-run starts cleanly from the top.
 
 ## 7. Open the New Client form to public (guided manual step)
 

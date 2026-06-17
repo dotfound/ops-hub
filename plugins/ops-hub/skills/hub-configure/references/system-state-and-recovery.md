@@ -8,7 +8,7 @@ All of `/hub-configure`'s durable state lives in the existing `⚙️ Hub Config
 
 | Name | Description (value) | Written |
 |---|---|---|
-| Setup Status | `in-progress` or `setup-complete` (the row being absent = never configured) | step 2 (in-progress), step 9 (complete) |
+| Setup Status | `in-progress` or `setup-complete` (the row being absent = never configured) | commit start / step 6 (in-progress), step 9 (complete) |
 | Hub Name | the hub's recorded name (the spine reads this to refine resolution) | step 9 |
 | Sources | the light source inventory, e.g. `Gmail, Drive (connected) · Trello, spreadsheet (manual)` | step 9 |
 | Setup Date | the date setup completed | step 9 |
@@ -17,9 +17,9 @@ All of `/hub-configure`'s durable state lives in the existing `⚙️ Hub Config
 
 These six are the System rows. They are **internal**: every other skill reads them (the spine does, for mode-awareness and the durable anchor) but none writes, shapes, describes, or annotates them. Only `/hub-configure` writes here.
 
-### The `System` Area option may need adding
+### The `System` Area option ships in the template
 
-The template ships the `Area` select with options Clients / Projects / Tasks / Pipeline / Client Body / Project Body — **`System` is not among them**. Before writing the first System row, introspect the Hub Config DB's `Area` options; if `System` is absent, add it via `notion-update-data-source` (an ALTER on the select). This is the skill's own internal write, not user data, so it needs no shaping approval. (Template-finalisation note: ideally the template ships `System` as an option so this never fires; until it does, add it defensively.)
+The template ships the `Area` select with `System` already among its options (Clients / Projects / Tasks / Pipeline / Client Body / Project Body / System), so a fresh duplicate already has it and the skill never adds it during setup. **Defensive fallback only:** if `System` is somehow absent (an old duplicate, or a user who deleted it), the skill adds it via `notion-update-data-source` as the first action of the **commit batch (step 6)**, never before the user has approved the preview. It is the skill's own internal write, not user data, so it carries no separate shaping approval, but it still waits for the commit so nothing lands pre-input.
 
 ## Mode detection (run this first)
 
@@ -36,7 +36,7 @@ A second signal corroborates "not configured": the 🤖 demo seed is still prese
 There is deliberately **no checkpoint state machine**. Re-running from the top is safe because:
 
 1. **The marker is written last** (the commit point). Bail before it and a re-run sees "not configured" (or "in-progress") and resumes; nothing falsely reads as done.
-2. **Schema deltas are batched** (collected, previewed, written in one go). Bail during the shaping interview and nothing is written: no half-mutated schema.
+2. **Nothing is written before the commit.** Orientation, connect, and shaping are all read-and-talk; schema deltas are collected, previewed, and written in one go only on approval. Bail any time before that approval and nothing at all has been written (not even the in-progress marker): no half-mutated schema, no orphaned setup state.
 3. **Every step is idempotent and reads live.** A re-walk shows the already-amended shape (so the user simply confirms it), the relation check finds healthy relations, the marker-based seed-find clears only whatever demo records remain.
 
 Worst case is repetition, not corruption.
@@ -55,4 +55,4 @@ If the user stops partway:
 
 - **Don't write `setup-complete`.** Report what's applied: schema deltas that landed are *their shape now* (kept, not reverted); an un-cleared seed is harmless demo data.
 - Tell them re-running `/hub-configure` resumes from where they are (it reads live and finishes the tail).
-- If `Setup Status` was already flipped to `in-progress` (step 2), leave it; that is what triggers the resume offer next time.
+- If the commit had begun and `Setup Status` was already set to `in-progress` (step 6), leave it; that is what triggers the resume offer next time.

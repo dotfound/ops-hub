@@ -7,7 +7,7 @@ description: Use when standing up, connecting to, or reshaping the Ops Hub, e.g.
 
 The setup conductor for the Ops Hub. The hub ships as a published Notion template the user duplicates in one click; this skill does everything after that click: locates the duplicated hub, connects the user's sources, walks a shaping interview so the user reshapes the default schema to their own, applies the deltas to both the Notion schema and the Hub Config descriptions, opens the New Client form, clears the demo seed, and writes the durable marker that tells every other skill the hub is ready. Re-runnable forever to evolve the shape or connect a new machine.
 
-**Core principle:** duplicate-then-amend, never build from scratch. The structure arrives correct by duplication; this skill only applies the user's deltas on top, batched and preview-first. It branches on the *state of the shared hub*, never on who or which machine is running it. Everything it writes is reversible-by-re-run: the marker is written last, schema deltas are batched, and every step reads live and is idempotent.
+**Core principle:** duplicate-then-amend, never build from scratch. The structure arrives correct by duplication; this skill only applies the user's deltas on top, batched and preview-first. It branches on the *state of the shared hub*, never on who or which machine is running it. Everything it writes is reversible-by-re-run: **nothing is written until the user approves the amend** (orientation, connect, and shaping are all read-and-talk), the completion marker is written last, schema deltas are batched, and every step reads live and is idempotent.
 
 ## Before you start
 
@@ -37,11 +37,11 @@ Two people sharing one Notion workspace see an identical hub: identity is undete
 Full detail in `references/first-setup.md`. The sequence, in order:
 
 1. **Notion check** — probe the Notion MCP; conduct connecting it if missing (required before anything else).
-2. **Locate the hub** — shared startup; if not found, tell the user to duplicate the published template (their one click), wait, re-locate. Write `Setup Status = in-progress` once located and verified.
+2. **Locate the hub** — shared startup; if not found, tell the user to duplicate the published template (their one click), wait, re-locate. Reads only; nothing is written here.
 3. **Verify + relation-integrity check** — confirm the 4 DBs + 2 stores; re-toggle any cross-DB relation that degraded to one-way (a safety net).
 4. **Connect + discover** — the guided "where does each kind of client context live for you today?" conversation; bin each named source connector-backed (probe + conduct-connect) or manual/paste; assemble a light source inventory.
 5. **Shaping interview** — per-DB recommend-and-adjust walk (Clients → Projects → Tasks → Pipeline → body sections). See `references/shaping-and-amend.md`.
-6. **Amend** — batch every delta, one preview, write on approval. See `references/shaping-and-amend.md`.
+6. **Amend** — one preview, then on approval the run's first writes: mark setup in-progress, then apply every delta. See `references/shaping-and-amend.md`.
 7. **Open the New Client form to public** — a guided manual step: walk the user through the Notion UI to make the form submittable by anyone with the link, then confirm by eye. Not an API write.
 8. **Clear the demo seed** — find the 🤖 seed client and its related records structurally, then have the user delete them in the UI (the connector can't delete rows) and verify they're gone. First-setup only.
 9. **Write the marker** — flip `Setup Status` to `setup-complete`; record Hub Name, Sources, Setup Date in the `Area = System` rows.
@@ -67,7 +67,7 @@ Everything else it **performs** directly (relation repair, schema property add /
 - **Duplicate-then-amend only.** Never build the hub or any DB from scratch; only apply deltas to the duplicated template.
 - **Never add or delete whole databases**, and never invite the user to. The 4 DBs are the backbone every skill resolves against. Shaping happens *within* them (rename the DB; rename / drop / add its fields).
 - **Required anchors are rename-only, never droppable:** each DB's title and the Client relation on Projects / Tasks / Pipeline. Refuse a drop; offer a rename.
-- **Batch → preview → write.** Collect every delta, show one preview, write only on explicit approval. No surprise schema writes.
+- **Batch → preview → write.** Collect every delta, show one preview, write only on explicit approval. **Nothing at all is written before that approval, not even an internal setup marker.** No surprise schema writes.
 - **The marker is written last.** Never write `setup-complete` before the seed is cleared and every delta is applied. This is what makes re-run-from-top safe.
 - **`Area = System` is reserved and internal.** Only this skill writes it; it is excluded from the shaping walk and the annotation flow.
 - **Formula expressions can't be set via the API** — create everything else, flag any formula field for a manual paste.
