@@ -54,12 +54,12 @@ If the user bails before approving, nothing has been written and a re-run starts
 
 The template's New Client form ships **workspace-members-only** (so the public template can't be spammed). In the user's own hub it must accept external submissions, or future clients can't self-serve their intake. This is a **conducted manual step, not an API write**: the form's sharing state isn't reliably set-and-verified through the API end-to-end (the toggle is settable but not readable back, and a separate publish-to-web step may also be needed), so the user makes the change in the Notion UI and confirms it by eye.
 
-Guide the user through it:
-- Open the Clients DB **"New client form"** view and open its share / publish settings.
-- Enable submissions from **anyone with the link** (turn on link sharing / publish-to-web for the form, however Notion's current UI presents it).
-- **Confirm it works:** open the form's share link in a private / incognito window and check it's submittable. A test submission should create a Clients row, which can be archived afterwards.
+Guide the user through it (Notion's current form-sharing flow):
+- Open the Clients DB **"New client form"** view. At the top it shows **"Only members can fill out this form."**
+- Click **Change** next to that message.
+- Set **who can fill out this form** to **Anyone with the link (public)**.
 
-Wait for the user to do it and confirm before moving on. Never assert the form is public; rely on their visual confirmation.
+The banner updates to reflect the new setting, so the user confirms by eye. (Optional extra check: open the form link in a private / incognito window and submit a test entry, which creates a Clients row they can delete afterwards.) Wait for the user to confirm before moving on. Never assert the form is public; rely on their visual confirmation.
 
 ## 8. Clear the demo seed (guided manual delete)
 
