@@ -13,6 +13,8 @@ The setup conductor for the Ops Hub. The hub ships as a published Notion templat
 
 Run shared startup first: read and follow `_shared/shared-startup.md` (in the plugin root, alongside `skills/`). It locates the hub, reads Hub Config (including the reserved `Area = System` rows this skill owns), introspects the DBs, and loads this skill's Skill Notes directives. Apply those directives as authoritative overrides.
 
+**Keep orientation lean: locate cheaply, then defer schema work to where it is consumed.** Do not front-load the full spine. Two stages get the user to the first real question: (1) locate the hub with one search (its child listing already confirms the four DBs and both stores, so there is no separate verify-children read), then (2) in one parallel batch read the `(System, Setup Status)` row and load Skill Notes, and decide the mode from Setup Status alone. Defer per-DB introspection (shared-startup step 3) and the relation-integrity safety net until the shaping interview reaches each DB. The point is that the user is not left waiting through a string of serial Notion round-trips before anything is asked of them.
+
 This is the **only** skill that mutates schema (`notion-update-data-source`), creates or adjusts views, and owns the `Area = System` namespace. Its destructive writes (schema deltas, seed archive) are always batched and preview-first.
 
 Load each reference as its phase begins, not upfront:
@@ -38,7 +40,7 @@ Full detail in `references/first-setup.md`. The sequence, in order:
 
 1. **Notion check** — probe the Notion MCP; conduct connecting it if missing (required before anything else).
 2. **Locate the hub** — shared startup; if not found, tell the user to duplicate the published template (their one click), wait, re-locate. Reads only; nothing is written here.
-3. **Verify + relation-integrity check** — confirm the 4 DBs + 2 stores; re-toggle any cross-DB relation that degraded to one-way (a safety net).
+3. **Verify structure** — confirm the 4 DBs + 2 stores (free from the locate step's child listing). The relation-integrity check is a deferred safety net, not an eager step: re-toggle a one-way relation only if a per-DB introspection during shaping reveals one. See `references/first-setup.md`.
 4. **Connect + discover** — one guided "connect the tools that hold your client info (email, files, calendar, task tracker, chat), and name anything that can't be connected" ask; no slow per-tool probing; assemble a light source inventory.
 5. **Shaping interview** — per-DB recommend-and-adjust walk (Clients → Projects → Tasks → Pipeline → body sections). See `references/shaping-and-amend.md`.
 6. **Amend** — one preview, then on approval the run's first writes: mark setup in-progress, then apply every delta. See `references/shaping-and-amend.md`.

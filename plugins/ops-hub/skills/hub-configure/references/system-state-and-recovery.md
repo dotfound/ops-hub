@@ -23,13 +23,13 @@ The template ships the `Area` select with `System` already among its options (Cl
 
 ## Mode detection (run this first)
 
-After shared startup, read the `(System, Setup Status)` row and decide:
+Right after the locate step, read the `(System, Setup Status)` row (in the same parallel batch as the Skill Notes load) and decide from it **alone**:
 
-- **Row absent** (and the demo seed still present) → **not configured** → first setup. See `first-setup.md`.
+- **Row absent** → **not configured** → first setup. See `first-setup.md`.
 - **`setup-complete`** → **configured** → ask the user: *connect / verify this machine* or *evolve the shape* (reshape). Never guess which; the hub looks identical to every person and machine.
 - **`in-progress`** → **interrupted** → tell the user a prior setup didn't finish, and offer to resume. Resuming is just re-running first setup from the top: every step is idempotent and reads live, so it walks past what's already done and finishes the tail. Offer the fast version (skip what's plainly applied) or the full re-walk.
 
-A second signal corroborates "not configured": the 🤖 demo seed is still present (the skill clears it as the last setup step, just before the marker). Marker absent + seed present = fresh. Marker present + seed gone = done.
+**Do not fetch the demo seed to corroborate the mode.** By construction the seed and the marker move together (the seed is cleared as the last setup step, just before the marker is written), so Setup Status decides on its own: marker absent means fresh, marker present means done. The seed is located and cleared later, at first-setup step 8, the only place its presence actually matters. Reading it during mode detection is a wasted search on the critical path.
 
 ## Why re-run-from-top is always safe (no checkpoint machine)
 

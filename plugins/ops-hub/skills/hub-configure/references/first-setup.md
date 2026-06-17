@@ -15,9 +15,11 @@ Run the shared-startup locate routine. Two outcomes:
 
 Locating and verifying **writes nothing**; the hub is only read here. Setup is not marked started, and no schema is touched, until the commit (step 6), after the user has been through discovery and shaping and approved the amend preview. (The `System` Area option ships in the template, so there is nothing to add here.)
 
-## 3. Verify + relation-integrity check
+## 3. Verify structure (relation check deferred)
 
-Confirm the parent page holds the expected children: the 4 DBs (Clients, Projects, Tasks, Pipeline) + both stores (⚙️ Hub Config, 🧠 Skill Notes). Then check the cross-DB relations are two-way (Clients ↔ Projects, Clients ↔ Tasks, Clients ↔ Pipeline, Projects ↔ Tasks). The duplication spike passed, so they should be intact; this is a safety net. If one degraded to one-way, **re-establish it** via `notion-update-data-source` (`RELATION(ds_id, DUAL 'synced_name')`). Surface any repair in the eventual preview.
+The locate step already listed the parent's children, so confirming the 4 DBs (Clients, Projects, Tasks, Pipeline) + both stores (⚙️ Hub Config, 🧠 Skill Notes) costs nothing extra here. Do **not** introspect the databases yet, and do **not** run a separate relation sweep: introspecting all four up front just to check relations is the main thing that makes the user wait, and on a fresh duplicate the relations are intact anyway (the duplication spike passed; this is a safety net, not a likely failure).
+
+Fold the relation-integrity check into the shaping walk instead. Each DB is introspected when the interview reaches it (step 5), and that same introspection reveals whether its cross-DB relation is two-way (Clients ↔ Projects, Clients ↔ Tasks, Clients ↔ Pipeline, Projects ↔ Tasks). If one is found degraded to one-way, **re-establish it** via `notion-update-data-source` (`RELATION(ds_id, DUAL 'synced_name')`) and surface the repair in the amend preview. Nothing is fetched here that the shaping walk will not fetch anyway.
 
 ## 4. Connect + discover
 
