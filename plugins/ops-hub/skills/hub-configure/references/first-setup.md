@@ -35,7 +35,7 @@ Fold the relation-integrity check into the shaping walk instead. Each DB is intr
 > - **Wherever you track tasks or projects** (Trello, Asana, Linear, and so on)
 > - **Team chat** (Slack)
 
-**Do not probe each connector with a real API call.** That is what makes the user wait, and it is unnecessary at setup: a connector that is connected but mis-scoped surfaces clearly when a skill actually uses it. Take the user's confirmation plus a **fast check of which connectors are now available** (the tool registry, not a live query), and move on.
+**Do not probe each connector with a real API call.** That is what makes the user wait, and it is unnecessary at setup: a connector that is connected but mis-scoped surfaces clearly when a skill actually uses it. Take the user's confirmation plus a **fast check of which connectors are available by reading the tools actually present in this session** (e.g. is a Gmail / Drive / Calendar tool available to you right now?), and move on. **Do not rely on `list_connectors`** — it has reported empty even when Gmail, Drive, and Calendar are live in-session.
 
 Assemble a **light source inventory**: a coarse one-line list of what the user connected (e.g. `Gmail, Drive, Calendar`), persisted in `(System, Sources)` at step 9. This is *not* a per-field data-source map (that drifts and was retired); it is a one-line memory of what is wired up. The OAuth boundary still holds: the skill conducts connecting (instruct, wait, confirm); it never clicks OAuth itself.
 
@@ -68,9 +68,9 @@ The banner updates to reflect the new setting, so the user confirms by eye. (Opt
 
 The template ships a 🤖-marked demo seed (a `🤖`-prefixed client + its related project, tasks, and a pipeline item) so relations and views render on duplication. Clear it now, **first-setup only**. The connector **cannot delete database rows** (only the user can, in the UI), so this is a **conducted** step, not a performed one:
 
-- Find the seed **structurally**: locate the `🤖`-prefixed seed client, then walk its relations to gather the linked project, tasks, and pipeline item. Don't match on hardcoded names or IDs.
+- Find the seed **structurally** and **capture the whole set up front**: locate the `🤖`-prefixed seed client, walk its relations to gather the linked project, tasks, and pipeline item, and note every record (with its ID, for this run) **before any deletion** — once the client is gone you can no longer walk its relations to find the rest. Don't match on hardcoded names or IDs.
 - **Present the exact records** (with their page links) and ask the user to delete them, framing it plainly: "Your hub came with a few sample records (a made-up client, a project, and some tasks) just so it didn't look empty. Now that you're set up, let's clear them so only your real data is left. Could you delete these in Notion? They go to the trash, so they're easy to get back if needed." Never ask them to delete a post-duplication record they may already have added.
-- **Verify before moving on:** re-search for the 🤖 seed client and confirm it's gone before writing the marker (step 9). This keeps "marker present ⇒ seed cleared" honest.
+- **Verify every record is gone, not just the client.** After the user deletes, re-check each captured seed record across all four DBs. (Real case from a run: the client, project, and pipeline item deleted cleanly but one seed **task** survived — re-checking only the client would have missed it and written the marker over a leftover.) Write the marker (step 9) only once **all** captured records are confirmed gone. This keeps "marker present ⇒ seed fully cleared" honest.
 
 This runs only when the marker is absent (mode detection gates it). It never runs on a configured hub.
 
@@ -86,6 +86,8 @@ The commit point. Write the `Area = System` rows (per `system-state-and-recovery
 
 Order matters: seed cleared (step 8) **then** marker (step 9), so "marker present" always means fully set up and seed gone.
 
-## 10. Confirm + handoff
+## 10. Tidy up + confirm + handoff
 
-Recap what changed: the renames / additions applied, the form opened (pending the user's visual confirm), the seed cleared, the sources wired up. Then **offer to chain into `/client-create`** for the user's first real client, so setup flows straight into first use.
+The fresh duplicate still carries the template's own boilerplate in the hub page body (the "Template hub. Duplicate this whole page…" note). **Offer to remove it** now the hub is set up, plainly: "Your hub still has the template's setup note near the top. Want me to tidy that away?" On a yes, edit it out of the page body; on a no, leave it untouched.
+
+Then recap what changed, in plain terms: the fields you adjusted, the form opened (pending their visual confirm), the sample data cleared, the tools connected, and what they can do next. Finally **offer to chain into `/client-create`** for the user's first real client, so setup flows straight into first use.

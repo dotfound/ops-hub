@@ -64,7 +64,7 @@ Full detail in `references/first-setup.md`. The sequence, in order:
 7. **Open the New Client form to public** — a guided manual step: walk the user through the Notion UI to make the form submittable by anyone with the link, then confirm by eye. Not an API write.
 8. **Clear the demo seed** — find the 🤖 seed client and its related records structurally, then have the user delete them in the UI (the connector can't delete rows) and verify they're gone. First-setup only.
 9. **Write the marker** — flip `Setup Status` to `setup-complete`; record Hub Name, Sources, Setup Date in the `Area = System` rows.
-10. **Confirm + handoff** — recap, then offer to chain into `/client-create` for the first real client.
+10. **Tidy + confirm + handoff** — offer to strip the leftover template note from the hub page body, recap in plain terms, then offer to chain into `/client-create` for the first real client.
 
 ## Reshape (configured → evolve the shape)
 
