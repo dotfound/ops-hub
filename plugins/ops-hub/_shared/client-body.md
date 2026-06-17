@@ -11,11 +11,11 @@ The only differences between the two skills:
 
 Otherwise the body-composition below is one operation used identically by both. The difference is only whether the row exists yet.
 
-## Sections come from Hub Config, not this file
+## The section list comes from the index row (with a default fallback)
 
-The body's sections are the Hub Config rows where `Area = Client Body` (read during shared startup). Write each as an H2 using the row's exact `Name`, in Hub Config order. Both client skills read the same list, so a section the user renames, drops, or adds via `/hub-configure` flows through automatically. Never hardcode the section list.
+The body's sections — names and order — come from the `(System, Client Body Sections)` **index row** in Hub Config: one row whose Description is the ordered, ` | `-delimited section list, read by a single exact-name lookup. This is how skills enumerate sections reliably — the connector can't bulk-read an Area (see the spine's **Connector read limits**). `/hub-configure` writes this row at setup and updates it whenever the user reshapes the section set, so changes flow through to both client skills. If the index row is somehow absent, fall back to the **default set** below. Resolve each section's *description* from its own `(Client Body, <name>)` row by exact-name lookup. Write each section as an H2 using its exact name, in index order.
 
-Default set shipped in the template: Contacts, Engagement Overview, Engagement History, Setup & Tooling, Tech Stack & Tools, Communications Log, Opportunities & Risks, Manual Notes.
+**Default set** (the fallback, and what `/hub-configure` seeds the index with): Contacts, Engagement overview, Engagement history, Setup / tooling, Tech stack and tools, Communications log, Opportunities and risks, Manual notes.
 
 **The never-overwrite section is identified by its description** (the Hub Config row whose description says the refresh never touches it), not a hardcoded name. `/client-update` preserves it verbatim; `/client-create` seeds it with a short prompt line.
 

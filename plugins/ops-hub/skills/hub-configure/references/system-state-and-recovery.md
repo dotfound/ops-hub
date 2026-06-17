@@ -12,8 +12,10 @@ All of `/hub-configure`'s durable state lives in the existing `⚙️ Hub Config
 | Hub Name | the hub's recorded name (the spine reads this to refine resolution) | step 9 |
 | Sources | the light source inventory, e.g. `Gmail, Drive (connected) · Trello, spreadsheet (manual)` | step 9 |
 | Setup Date | the date setup completed | step 9 |
+| Client Body Sections | the ordered ` | `-delimited client-body section list (the body-section index skills read to enumerate sections) | step 9, and on reshape |
+| Project Body Sections | the ordered ` | `-delimited project-body section list (the body-section index) | step 9, and on reshape |
 
-These four are the only System rows. They are **internal**: every other skill reads them (the spine does, for mode-awareness and the durable anchor) but none writes, shapes, describes, or annotates them. Only `/hub-configure` writes here.
+These six are the System rows. They are **internal**: every other skill reads them (the spine does, for mode-awareness and the durable anchor) but none writes, shapes, describes, or annotates them. Only `/hub-configure` writes here.
 
 ### The `System` Area option may need adding
 

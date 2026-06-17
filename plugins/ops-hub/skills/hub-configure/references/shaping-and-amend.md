@@ -18,7 +18,7 @@ Exclude the `Area = System` rows from the walk entirely — they are internal st
 
 - **Rename the DB** (e.g. Projects → "Projects / Sprints"). A rename only; skills resolve DBs by role, so a rename is invisible to them.
 - **Rename a field**, **drop a field**, or **add a field**.
-- **Body sections** (Client Body, Project Body) the same way: rename, drop, add. These are page-body sections, recorded only as Hub Config rows.
+- **Body sections** (Client Body, Project Body) the same way: rename, drop, add, reorder. The section list + order lives in the `(System, … Sections)` index row; each section's description in its own `(… Body, <name>)` row.
 
 ### What the user cannot shape
 
@@ -39,12 +39,13 @@ A delta lands in different places depending on what it is:
 | **Add a DB field** | schema (create the property with a type, see below) **and** a new `(Area, Name, Description)` Hub Config row |
 | **Drop a DB field** | schema (`DROP COLUMN`, performed) **and** the orphaned Hub Config row flagged for a manual delete (the connector can't delete rows — see below) |
 | **Rename a DB** | schema (the DB title) **and** the Area label on any Hub Config rows for that DB |
-| **Rename / drop / add a body section** | **Hub Config row only** (body sections are page content, not Notion properties) |
+| **Add / rename / reorder a body section** | the `(System, … Sections)` index row (the list + order) **and**, for an add or rename, the per-section `(Client/Project Body, <name>)` description row |
+| **Remove a body section** | drop it from the `(System, … Sections)` index row (the description row is left orphaned and ignored — no row delete needed) |
 | **Edit a description** | Hub Config row only |
 
 The rule of thumb: **DB field change = schema + Hub Config; body-section change = Hub Config only.**
 
-**Removing things is a guided manual step.** The connector drops a *property* (`DROP COLUMN`, performed directly) and creates/edits rows, but it **cannot delete a database *row***. So a dropped DB field (or a removed body section, which is just a Hub Config row) leaves an orphaned Hub Config row the skill **can't delete** — it performs the schema drop, then **asks the user to delete that row in the UI** (same constraint as the seed-clear). Until they do, the orphan is harmless: it matches no live field. Adds, renames, new rows, and description edits the skill still performs directly.
+**Removing things.** The connector drops a *property* (`DROP COLUMN`, performed) and creates/edits rows, but **cannot delete a database *row***. So a dropped DB **field** leaves an orphaned `(Area, <name>)` Hub Config row the skill can't delete — it drops the property, then flags the row for an *optional* manual delete (harmless if left: it matches no live field). A removed **body section** is cleaner — just drop it from the `(System, … Sections)` index row; the per-section description row is left orphaned and ignored, **no delete needed**. Adds, renames, reorders, new rows, index-row updates, and description edits the skill performs directly.
 
 ### New fields: type and description
 

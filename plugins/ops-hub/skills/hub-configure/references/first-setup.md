@@ -61,14 +61,15 @@ The template ships a 🤖-marked demo seed (a `🤖`-prefixed client + its relat
 
 This runs only when the marker is absent (mode detection gates it). It never runs on a configured hub.
 
-## 9. Write the marker
+## 9. Write the marker (and the section index)
 
-The commit point. Write the four `Area = System` rows (per `system-state-and-recovery.md`):
+The commit point. Write the `Area = System` rows (per `system-state-and-recovery.md`):
 
 - Flip `(System, Setup Status)` from `in-progress` to **`setup-complete`** (update in place).
 - Write `(System, Hub Name)` = the hub's name.
 - Write `(System, Sources)` = the light inventory from step 4.
 - Write `(System, Setup Date)` = today.
+- Write `(System, Client Body Sections)` and `(System, Project Body Sections)` = the final ordered ` | `-delimited section list for each body (the documented default, or as reshaped in the interview). These index rows are how the body skills enumerate sections reliably; write them whether or not the user reshaped, so they're always present and authoritative.
 
 Order matters: seed cleared (step 8) **then** marker (step 9), so "marker present" always means fully set up and seed gone.
 

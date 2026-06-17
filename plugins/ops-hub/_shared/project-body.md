@@ -19,7 +19,7 @@ Beneath it, a **summary structured on the standard SOW format** (sections 1-8), 
 
 (Charges / fee live in the project's *properties* — Fee, Billing Type — not the body, though the summary may restate them.)
 
-> Note: the template's Hub Config `Area = Project Body` rows currently ship as a generic "Task table" + "Project summary". They should be updated to the sections above so the skills read them live (a template-finalisation task). Until then, `/project-create` uses this documented default.
+> **Section list — from the index row, with this as the default.** The project body's section list comes from the `(System, Project Body Sections)` **index row** in Hub Config (one exact-name lookup; the connector can't bulk-read an Area — see the spine's **Connector read limits**). `/hub-configure` writes that row at setup and on any reshape. If it's absent, use the SOW structure above as the default (Task table + sections 1-8). Resolve each section's description from its `(Project Body, <name>)` row; a section with no description row is rendered from this spec. (This supersedes the earlier "template ships generic Task table + Project summary rows, finalize later" note — the index row plus this documented default are the source now, so those generic rows don't need replacing.)
 
 ## Input and the missing-info rule
 
