@@ -11,9 +11,15 @@ The setup conductor for the Ops Hub. The hub ships as a published Notion templat
 
 ## Before you start
 
-Run shared startup first: read and follow `_shared/shared-startup.md` (in the plugin root, alongside `skills/`). It locates the hub, reads Hub Config (including the reserved `Area = System` rows this skill owns), introspects the DBs, and loads this skill's Skill Notes directives. Apply those directives as authoritative overrides.
+**Locate the hub by asking the user, not by searching.** This skill is almost always run right after the user duplicated the template, so the fastest and most reliable locate is to have them hand it over directly. This **replaces** the shared spine's name-search locate (`_shared/shared-startup.md` step 1) for this skill: do not run that fuzzy resolution here.
 
-**Keep orientation lean: locate cheaply, then defer schema work to where it is consumed.** Do not front-load the full spine. Two stages get the user to the first real question: (1) locate the hub with one search (its child listing already confirms the four DBs and both stores, so there is no separate verify-children read), then (2) in one parallel batch read the `(System, Setup Status)` row and load Skill Notes, and decide the mode from Setup Status alone. Defer per-DB introspection (shared-startup step 3) and the relation-integrity safety net until the shaping interview reaches each DB. The point is that the user is not left waiting through a string of serial Notion round-trips before anything is asked of them.
+The whole orientation is three quick moves, then you are talking to the user:
+
+1. **Ask for the hub.** "Paste the link to the hub page you duplicated, or tell me its name." A pasted Notion URL contains the page ID, so use it directly; only if they give a name, do a single `search` to resolve it.
+2. **`fetch` that page once.** This doubles as the Notion connectivity check (if it fails because Notion isn't connected, conduct connecting it, then retry) and returns the page's children. Confirm they include the four DBs (Clients, Projects, Pipeline, Tasks) and both stores (⚙️ Hub Config, 🧠 Skill Notes); if any are missing it is the wrong page, so ask again.
+3. **One `search` of ⚙️ Hub Config for the `(System, Setup Status)` row**, then decide the mode (`references/system-state-and-recovery.md`): absent = fresh duplicate = first setup.
+
+That is the whole orientation: two Notion calls (one `fetch`, one `search`), no hub-resolution and nothing read up front. Everything else the spine describes is deferred to the step that consumes it: per-DB introspection during the shaping walk, description resolution during a reshape, and the Skill Notes directives loaded only on a configured hub (a fresh duplicate ships ⚙️ Skill Notes empty). Read those parts of `_shared/shared-startup.md` when you reach them, and apply any Skill Notes directives as authoritative overrides.
 
 This is the **only** skill that mutates schema (`notion-update-data-source`), creates or adjusts views, and owns the `Area = System` namespace. Its destructive writes (schema deltas, seed archive) are always batched and preview-first.
 
@@ -38,9 +44,9 @@ Two people sharing one Notion workspace see an identical hub: identity is undete
 
 Full detail in `references/first-setup.md`. The sequence, in order:
 
-1. **Notion check** — probe the Notion MCP; conduct connecting it if missing (required before anything else).
-2. **Locate the hub** — shared startup; if not found, tell the user to duplicate the published template (their one click), wait, re-locate. Reads only; nothing is written here.
-3. **Verify structure** — confirm the 4 DBs + 2 stores (free from the locate step's child listing). The relation-integrity check is a deferred safety net, not an eager step: re-toggle a one-way relation only if a per-DB introspection during shaping reveals one. See `references/first-setup.md`.
+1. **Notion check** — no separate probe; the hub `fetch` in step 2 is the connectivity check. If it fails because Notion isn't connected, conduct connecting it first (Notion is the one required connector).
+2. **Get the hub from the user** — ask them to paste the link to the hub they duplicated (or its name), and `fetch` it once. If they haven't duplicated yet, tell them to (their one click), wait, then ask. Reads only; nothing is written here.
+3. **Verify structure** — the step-2 fetch already listed the children, so confirm the 4 DBs + 2 stores from it. The relation-integrity check is a deferred safety net, not an eager step: re-toggle a one-way relation only if a per-DB introspection during shaping reveals one. See `references/first-setup.md`.
 4. **Connect + discover** — one guided "connect the tools that hold your client info (email, files, calendar, task tracker, chat), and name anything that can't be connected" ask; no slow per-tool probing; assemble a light source inventory.
 5. **Shaping interview** — per-DB recommend-and-adjust walk (Clients → Projects → Tasks → Pipeline → body sections). See `references/shaping-and-amend.md`.
 6. **Amend** — one preview, then on approval the run's first writes: mark setup in-progress, then apply every delta. See `references/shaping-and-amend.md`.

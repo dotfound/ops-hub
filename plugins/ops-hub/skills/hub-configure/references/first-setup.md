@@ -4,20 +4,21 @@ The full first-setup sequence for `/hub-configure`. Run only when mode detection
 
 ## 1. Notion check
 
-Probe the Notion MCP with a cheap real call (e.g. a `search`). If it fails or isn't connected, **conduct** connecting it: a skill can't click OAuth, so instruct the user to connect Notion in their Cowork connectors, wait, and re-probe. Notion is the one structurally required connector; nothing below works without it.
+No separate probe call. The hub `fetch` in step 2 doubles as the connectivity check. If that fetch fails because Notion isn't connected, **conduct** connecting it: a skill can't click OAuth, so instruct the user to connect Notion in their Cowork connectors, wait, and retry. Notion is the one structurally required connector; nothing below works without it.
 
-## 2. Locate the hub
+## 2. Get the hub from the user
 
-Run the shared-startup locate routine. Two outcomes:
+You already did this in orientation (SKILL.md "Before you start"): asked the user to paste the hub link (or name) and `fetch`ed it once. Don't re-ask. For reference and edge handling, the locate is:
 
-- **Found, with a `setup-complete` marker** → this isn't first setup; switch to the configured branch (ask connect-vs-reshape).
-- **Not found** → the user hasn't duplicated the template yet. Tell them to duplicate the published template into their workspace (their one click; **not** automated, because the published-template flow is what preserves the relation-remap). Wait, then re-locate. If still not found, help them check the duplication landed in this workspace.
+- The user pastes **the link to the hub they duplicated** (a Notion URL carries the page ID, so `fetch` directly), or its name (one `search` to resolve). Right after duplicating they have it to hand, so there is no fuzzy resolution.
+- **Wrong page** (the fetch is missing some of the 4 DBs + both stores) → ask for the correct link.
+- **Not duplicated yet** → tell them to duplicate the published template into their workspace (their one click; **not** automated, because the published-template flow preserves the relation-remap). Wait, then ask again.
 
-Locating and verifying **writes nothing**; the hub is only read here. Setup is not marked started, and no schema is touched, until the commit (step 6), after the user has been through discovery and shaping and approved the amend preview. (The `System` Area option ships in the template, so there is nothing to add here.)
+Locating **writes nothing**; the hub is only read. Setup is not marked started, and no schema is touched, until the commit (step 6), after discovery, shaping, and the user's approval of the amend preview. (The `System` Area option ships in the template, so there is nothing to add here.)
 
 ## 3. Verify structure (relation check deferred)
 
-The locate step already listed the parent's children, so confirming the 4 DBs (Clients, Projects, Tasks, Pipeline) + both stores (⚙️ Hub Config, 🧠 Skill Notes) costs nothing extra here. Do **not** introspect the databases yet, and do **not** run a separate relation sweep: introspecting all four up front just to check relations is the main thing that makes the user wait, and on a fresh duplicate the relations are intact anyway (the duplication spike passed; this is a safety net, not a likely failure).
+The step-2 fetch already listed the children, so confirming the 4 DBs (Clients, Projects, Tasks, Pipeline) + both stores (⚙️ Hub Config, 🧠 Skill Notes) costs nothing extra here. Do **not** introspect the databases yet, and do **not** run a separate relation sweep: introspecting all four up front just to check relations is the main thing that makes the user wait, and on a fresh duplicate the relations are intact anyway (the duplication spike passed; this is a safety net, not a likely failure).
 
 Fold the relation-integrity check into the shaping walk instead. Each DB is introspected when the interview reaches it (step 5), and that same introspection reveals whether its cross-DB relation is two-way (Clients ↔ Projects, Clients ↔ Tasks, Clients ↔ Pipeline, Projects ↔ Tasks). If one is found degraded to one-way, **re-establish it** via `notion-update-data-source` (`RELATION(ds_id, DUAL 'synced_name')`) and surface the repair in the amend preview. Nothing is fetched here that the shaping walk will not fetch anyway.
 

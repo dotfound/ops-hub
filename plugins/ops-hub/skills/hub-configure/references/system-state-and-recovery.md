@@ -23,7 +23,7 @@ The template ships the `Area` select with `System` already among its options (Cl
 
 ## Mode detection (run this first)
 
-Right after the locate step, read the `(System, Setup Status)` row (in the same parallel batch as the Skill Notes load) and decide from it **alone**:
+Right after fetching the hub the user gave you, read the `(System, Setup Status)` row from ⚙️ Hub Config with one targeted `search`, and decide from it **alone** (a fresh duplicate ships ⚙️ Skill Notes empty, so there's nothing to load on the first-setup path; load Skill Notes only when the hub is configured, before a reshape):
 
 - **Row absent** → **not configured** → first setup. See `first-setup.md`.
 - **`setup-complete`** → **configured** → ask the user: *connect / verify this machine* or *evolve the shape* (reshape). Never guess which; the hub looks identical to every person and machine.
