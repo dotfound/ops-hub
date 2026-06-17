@@ -10,7 +10,7 @@ All of `/hub-configure`'s durable state lives in the existing `⚙️ Hub Config
 |---|---|---|
 | Setup Status | `in-progress` or `setup-complete` (the row being absent = never configured) | commit start / step 6 (in-progress), step 9 (complete) |
 | Hub Name | the hub's recorded name (the spine reads this to refine resolution) | step 9 |
-| Sources | the light source inventory, e.g. `Gmail, Drive (connected) · Trello, spreadsheet (manual)` | step 9 |
+| Sources | the light source inventory, e.g. `Gmail, Drive, Calendar` | step 9 |
 | Setup Date | the date setup completed | step 9 |
 | Client Body Sections | the ordered ` | `-delimited client-body section list (the body-section index skills read to enumerate sections) | step 9, and on reshape |
 | Project Body Sections | the ordered ` | `-delimited project-body section list (the body-section index) | step 9, and on reshape |

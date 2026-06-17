@@ -9,13 +9,24 @@ The setup conductor for the Ops Hub. The hub ships as a published Notion templat
 
 **Core principle:** duplicate-then-amend, never build from scratch. The structure arrives correct by duplication; this skill only applies the user's deltas on top, batched and preview-first. It branches on the *state of the shared hub*, never on who or which machine is running it. Everything it writes is reversible-by-re-run: **nothing is written until the user approves the amend** (orientation, connect, and shaping are all read-and-talk), the completion marker is written last, schema deltas are batched, and every step reads live and is idempotent.
 
+## Talking to the user
+
+The user runs their business; they are not configuring software. Everything you *say* to them is plain, friendly English, the kind a helpful colleague would use:
+
+- **Before each step, say in a sentence what is about to happen and why it helps them** ("Next I'll connect the places your client info lives, so the hub can fill in details for you instead of you typing them in").
+- **Never expose the plumbing.** No page or database IDs, no "data source", "schema", "introspect", "relation", "property", "marker", or "connector ID". Say "your hub", "the Clients list", "the fields", "the form".
+- **When you need them to do something** (connect a tool, change a setting, remove the sample data), explain why it is needed, give clear short steps, and say what you will do once it is done.
+- **Plain is not wordy.** A sentence of why, then the ask.
+
+This governs only what the user sees. The internal routine (locating, reading, introspecting, the amend batch) stays exactly as the references specify; it just runs quietly behind plain narration.
+
 ## Before you start
 
 **Locate the hub by asking the user, not by searching.** This skill is almost always run right after the user duplicated the template, so the fastest and most reliable locate is to have them hand it over directly. This **replaces** the shared spine's name-search locate (`_shared/shared-startup.md` step 1) for this skill: do not run that fuzzy resolution here.
 
 The whole orientation is three quick moves, then you are talking to the user:
 
-1. **Ask for the hub.** "Paste the link to the hub page you duplicated, or tell me its name." A pasted Notion URL contains the page ID, so use it directly; only if they give a name, do a single `search` to resolve it.
+1. **Ask for the hub.** Plainly, for example: "Nice work duplicating the template. Paste me the link to your new hub page and I'll take it from there. (In Notion: open the page, click the ••• at the top right, and choose Copy link. Or just tell me what you named it.)" A pasted Notion URL contains the page ID, so use it directly; only if they give a name, do a single `search` to resolve it.
 2. **`fetch` that page once.** This doubles as the Notion connectivity check (if it fails because Notion isn't connected, conduct connecting it, then retry) and returns the page's children. Confirm they include the four DBs (Clients, Projects, Pipeline, Tasks) and both stores (⚙️ Hub Config, 🧠 Skill Notes); if any are missing it is the wrong page, so ask again.
 3. **One `search` of ⚙️ Hub Config for the `(System, Setup Status)` row**, then decide the mode (`references/system-state-and-recovery.md`): absent = fresh duplicate = first setup.
 

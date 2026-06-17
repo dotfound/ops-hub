@@ -26,18 +26,18 @@ Fold the relation-integrity check into the shaping walk instead. Each DB is intr
 
 **One guided ask, not a tool-by-tool interview.** Interrogating the user category by category and probing each named connector with a real call is slow: the user waits while every probe runs (four named Google tools is four round-trips, plus a connect-and-re-probe for any that are off). Instead, ask once, up front, for the user to connect everything that holds their client information, prompted by category with examples so nothing is forgotten:
 
-> Connect the tools where your client information lives, in your Cowork connectors. For example:
-> - **Email** (Gmail, Outlook)
-> - **Files and folders** (Google Drive, Dropbox, OneDrive)
-> - **Calendar** (Google Calendar)
-> - **Task or project tracking** (Trello, Asana, Notion, Linear)
-> - **Team chat** (Slack)
+> Next, let's connect the places your client information already lives. Once they're linked, the hub can fill in things like recent emails, files, and meetings for you, instead of you typing them in by hand.
 >
-> Also tell me about anything that holds client information but can't be connected (a spreadsheet, a board with no connector, notes in your head), so I know you'll paste those in later. Only Notion is strictly required.
+> Connect whichever of these you use:
+> - **Email** (Gmail or Outlook)
+> - **Files** (Google Drive, Dropbox, or OneDrive)
+> - **Calendar**
+> - **Wherever you track tasks or projects** (Trello, Asana, Linear, and so on)
+> - **Team chat** (Slack)
 
 **Do not probe each connector with a real API call.** That is what makes the user wait, and it is unnecessary at setup: a connector that is connected but mis-scoped surfaces clearly when a skill actually uses it. Take the user's confirmation plus a **fast check of which connectors are now available** (the tool registry, not a live query), and move on.
 
-Assemble a **light source inventory**: a coarse `source → connected | manual` list (e.g. `Gmail, Drive, Calendar (connected) · retainer spreadsheet (manual)`), persisted in `(System, Sources)` at step 9. This is *not* a per-field data-source map (that drifts and was retired); it is a one-line memory of what is wired up. The OAuth boundary still holds: the skill conducts connecting (instruct, wait, confirm); it never clicks OAuth itself.
+Assemble a **light source inventory**: a coarse one-line list of what the user connected (e.g. `Gmail, Drive, Calendar`), persisted in `(System, Sources)` at step 9. This is *not* a per-field data-source map (that drifts and was retired); it is a one-line memory of what is wired up. The OAuth boundary still holds: the skill conducts connecting (instruct, wait, confirm); it never clicks OAuth itself.
 
 ## 5. Shaping interview
 
@@ -57,7 +57,7 @@ If the user bails before approving, nothing has been written and a re-run starts
 
 The template's New Client form ships **workspace-members-only** (so the public template can't be spammed). In the user's own hub it must accept external submissions, or future clients can't self-serve their intake. This is a **conducted manual step, not an API write**: the form's sharing state isn't reliably set-and-verified through the API end-to-end (the toggle is settable but not readable back, and a separate publish-to-web step may also be needed), so the user makes the change in the Notion UI and confirms it by eye.
 
-Guide the user through it (Notion's current form-sharing flow):
+Tell the user why, plainly: "Your hub includes a New Client form so new clients can send you their details. Right now only people in your workspace can open it, so let's make it shareable by link." Then guide them through it (Notion's current form-sharing flow):
 - Open the Clients DB **"New client form"** view. At the top it shows **"Only members can fill out this form."**
 - Click **Change** next to that message.
 - Set **who can fill out this form** to **Anyone with the link (public)**.
@@ -69,7 +69,7 @@ The banner updates to reflect the new setting, so the user confirms by eye. (Opt
 The template ships a 🤖-marked demo seed (a `🤖`-prefixed client + its related project, tasks, and a pipeline item) so relations and views render on duplication. Clear it now, **first-setup only**. The connector **cannot delete database rows** (only the user can, in the UI), so this is a **conducted** step, not a performed one:
 
 - Find the seed **structurally**: locate the `🤖`-prefixed seed client, then walk its relations to gather the linked project, tasks, and pipeline item. Don't match on hardcoded names or IDs.
-- **Present the exact records** (with their page links) and ask the user to delete them in the Notion UI (Notion trash, recoverable). Never ask them to delete a post-duplication record they may already have added.
+- **Present the exact records** (with their page links) and ask the user to delete them, framing it plainly: "Your hub came with a few sample records (a made-up client, a project, and some tasks) just so it didn't look empty. Now that you're set up, let's clear them so only your real data is left. Could you delete these in Notion? They go to the trash, so they're easy to get back if needed." Never ask them to delete a post-duplication record they may already have added.
 - **Verify before moving on:** re-search for the 🤖 seed client and confirm it's gone before writing the marker (step 9). This keeps "marker present ⇒ seed cleared" honest.
 
 This runs only when the marker is absent (mode detection gates it). It never runs on a configured hub.

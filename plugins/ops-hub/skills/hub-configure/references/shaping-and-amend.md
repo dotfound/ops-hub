@@ -12,7 +12,7 @@ Walk one DB at a time, in order: **Clients → Projects → Tasks → Pipeline �
 
 **Introspect each DB's live schema at the moment you reach it, not all up front.** The field list the user reacts to comes from that DB's introspection paired with its Hub Config descriptions; fetching it on demand spreads the cost behind the user's reading time instead of front-loading four fetches into orientation. While you have that schema, also confirm the DB's cross-DB relation is still two-way (the deferred relation-integrity safety net from first-setup step 3); if one is one-way, repair it and surface that in the amend preview.
 
-For each DB, present it as a plain **"Field — what it's for"** list, the descriptions taken from the Hub Config rows for that Area (never raw Notion schema, never property types). Then ask **one** question: *"keep this as-is, or change anything?"* Drill into a specific field only when the user wants to change it. Frame the whole thing as a proposal to react to, not a form to fill.
+For each DB, present it as a plain **"Field — what it's for"** list, the descriptions taken from the Hub Config rows for that Area (never raw Notion schema, never property types). Then ask **one** plain question, for example: *"This is what your Clients list keeps track of. Does it match how you work, or would you like to add, rename, or remove anything?"* Drill into a specific field only when the user wants to change it. Frame the whole thing as a proposal to react to, not a form to fill.
 
 Exclude the `Area = System` rows from the walk entirely — they are internal state, not user fields.
 
