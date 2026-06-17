@@ -37,12 +37,14 @@ A delta lands in different places depending on what it is:
 |---|---|
 | **Rename a DB field** | schema (`notion-update-data-source`, rename the property) **and** the matching Hub Config row's Name |
 | **Add a DB field** | schema (create the property with a type, see below) **and** a new `(Area, Name, Description)` Hub Config row |
-| **Drop a DB field** | schema (remove the property) **and** prune the matching Hub Config row |
+| **Drop a DB field** | schema (`DROP COLUMN`, performed) **and** the orphaned Hub Config row flagged for a manual delete (the connector can't delete rows — see below) |
 | **Rename a DB** | schema (the DB title) **and** the Area label on any Hub Config rows for that DB |
 | **Rename / drop / add a body section** | **Hub Config row only** (body sections are page content, not Notion properties) |
 | **Edit a description** | Hub Config row only |
 
 The rule of thumb: **DB field change = schema + Hub Config; body-section change = Hub Config only.**
+
+**Removing things is a guided manual step.** The connector drops a *property* (`DROP COLUMN`, performed directly) and creates/edits rows, but it **cannot delete a database *row***. So a dropped DB field (or a removed body section, which is just a Hub Config row) leaves an orphaned Hub Config row the skill **can't delete** — it performs the schema drop, then **asks the user to delete that row in the UI** (same constraint as the seed-clear). Until they do, the orphan is harmless: it matches no live field. Adds, renames, new rows, and description edits the skill still performs directly.
 
 ### New fields: type and description
 
@@ -57,7 +59,7 @@ The single preview shows, grouped clearly:
 - Schema changes (renames, adds with their types, drops) per DB.
 - Hub Config row changes (new / renamed / pruned descriptions, body-section changes).
 - Any relation repair from the integrity check.
-- Anything flagged for manual follow-up (formula expressions, the form toggle's visual confirm).
+- Anything flagged for manual follow-up (formula expressions, the form toggle's visual confirm, and any Hub Config rows the user must delete in the UI for dropped fields / sections).
 
 ## Reshape (the targeted version)
 

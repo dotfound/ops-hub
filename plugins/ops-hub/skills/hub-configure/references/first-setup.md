@@ -51,13 +51,13 @@ Guide the user through it:
 
 Wait for the user to do it and confirm before moving on. Never assert the form is public; rely on their visual confirmation.
 
-## 8. Clear the demo seed
+## 8. Clear the demo seed (guided manual delete)
 
-The template ships a 🤖-marked demo seed (a `🤖`-prefixed client + its related project, tasks, and a pipeline item) so relations and views render on duplication. Clear it now, **first-setup only**:
+The template ships a 🤖-marked demo seed (a `🤖`-prefixed client + its related project, tasks, and a pipeline item) so relations and views render on duplication. Clear it now, **first-setup only**. The connector **cannot delete database rows** (only the user can, in the UI), so this is a **conducted** step, not a performed one:
 
 - Find the seed **structurally**: locate the `🤖`-prefixed seed client, then walk its relations to gather the linked project, tasks, and pipeline item. Don't match on hardcoded names or IDs.
-- **Preview** the exact records to be removed.
-- On approval, **archive** them (Notion trash, recoverable). Never hard-delete, and never touch any post-duplication record the user may have already added.
+- **Present the exact records** (with their page links) and ask the user to delete them in the Notion UI (Notion trash, recoverable). Never ask them to delete a post-duplication record they may already have added.
+- **Verify before moving on:** re-search for the 🤖 seed client and confirm it's gone before writing the marker (step 9). This keeps "marker present ⇒ seed cleared" honest.
 
 This runs only when the marker is absent (mode detection gates it). It never runs on a configured hub.
 

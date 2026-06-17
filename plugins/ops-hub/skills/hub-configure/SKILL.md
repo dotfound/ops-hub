@@ -43,7 +43,7 @@ Full detail in `references/first-setup.md`. The sequence, in order:
 5. **Shaping interview** — per-DB recommend-and-adjust walk (Clients → Projects → Tasks → Pipeline → body sections). See `references/shaping-and-amend.md`.
 6. **Amend** — batch every delta, one preview, write on approval. See `references/shaping-and-amend.md`.
 7. **Open the New Client form to public** — a guided manual step: walk the user through the Notion UI to make the form submittable by anyone with the link, then confirm by eye. Not an API write.
-8. **Clear the demo seed** — find the 🤖 seed client and its related records structurally, preview, archive on approval. First-setup only.
+8. **Clear the demo seed** — find the 🤖 seed client and its related records structurally, then have the user delete them in the UI (the connector can't delete rows) and verify they're gone. First-setup only.
 9. **Write the marker** — flip `Setup Status` to `setup-complete`; record Hub Name, Sources, Setup Date in the `Area = System` rows.
 10. **Confirm + handoff** — recap, then offer to chain into `/client-create` for the first real client.
 
@@ -53,12 +53,13 @@ Targeted, not the full walk. Ask "what would you like to change?", resolve the a
 
 ## Conduct vs perform
 
-Three things this skill cannot do itself, so it *conducts* them (instruct, wait, confirm) rather than performing:
+Four things this skill cannot do itself, so it *conducts* them (instruct, wait, confirm) rather than performing:
 - **The user duplicating the template** — their one click; never automated (automating it abandons the spiked published-template relation-remap).
 - **OAuth consent** — a hard security boundary; a skill can't click an OAuth screen.
 - **Making the New Client form public** — a guided manual toggle in the Notion UI; the form's sharing state isn't reliably set-and-verified through the API, so the user makes it submittable-by-anyone and confirms by eye.
+- **Deleting database rows** (the demo seed; a dropped field's orphaned Hub Config row) — the connector can drop a *property* but **cannot archive or delete a *row***, so the user deletes these in the UI and the skill verifies before continuing.
 
-Everything else it **performs** directly (relation repair, schema amend, seed archive, marker + inventory writes, descriptions, view adjustments), preview-first where destructive.
+Everything else it **performs** directly (relation repair, schema property add / rename, marker + inventory writes via row *creation*, descriptions, view adjustments), preview-first where destructive.
 
 ## Hard rules
 

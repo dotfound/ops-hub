@@ -18,10 +18,10 @@ The hub is shaped openly: the user may rename fields, add their own, or drop one
    - Capture the resolved IDs **for this run only**. Never store them between runs (they differ per hub and can change).
 
 2. **Read the semantic store (`⚙️ Hub Config`).**
-   - Fetch every row. Each is `(Area, Name, Description)`; Area disambiguates fields that share a name across DBs (e.g. `Status`, `Client`, `Title`).
+   - **Resolve descriptions by targeted lookup, not a bulk read.** `fetch` on the Hub Config database returns only its *schema*, not its rows, and `search` is semantic + capped (≤25 results, no pagination) — so neither bulk-reads the store (see **Connector read limits** below). Instead: take the authoritative field *list* from live introspection (step 3), and resolve each field's *meaning* on demand by `search`ing the Hub Config data source (`data_source_url`) for that field's name and taking the **exact-title** match. Cache what you resolve for the run. Each row is `(Area, Name, Description)`; Area disambiguates names shared across DBs (e.g. `Status`, `Client`, `Title`). A name with no exact match is undescribed → step 5.
    - **`Area = System` rows are reserved internal state, not field descriptions.** They are the hub's durable anchor and setup state — `Setup Status`, `Hub Name`, `Sources`, `Setup Date` — written and owned by `/hub-configure`. Read them to learn whether the hub is configured (see below) and to refine resolution, but **exclude them from the field lookup, the shaping walk, and the undescribed-field annotation flow**. They are not user fields; no skill describes, shapes, or annotates them.
    - **The `Setup Status` row is the configured-flag** (tri-state): a value of `setup-complete` means the hub is fully stood up; `in-progress` means `/hub-configure` was interrupted mid-setup; the row being **absent** means the hub has never been configured. Ordinary skills only need: row present and `setup-complete` → proceed normally; otherwise the hub may be unconfigured or half-configured, so if an anchor is also missing, point the user to `/hub-configure`. Acting on the tri-state is `/hub-configure`'s job.
-   - Build the field lookup keyed by `(Area, Name)` to its description from the remaining (non-System) rows. This is "what each field and section is for."
+   - Build the field lookup keyed by `(Area, Name)` to its description from the resolved (non-System) rows. This is "what each field and section is for."
 
 3. **Introspect each database live.**
    - For each DB the skill will touch, fetch its current property schema (property names + types) from Notion. This reflects the user's hub as it is right now, including their renames and additions.
@@ -51,12 +51,27 @@ The hub is shaped openly: the user may rename fields, add their own, or drop one
 
 (Names are stable; exact parameters are confirmed when each skill is built.)
 
-- `search` — locate the hub parent page by name.
-- `fetch` — read a page, database, or data-source schema and its rows.
+- `search` — locate the hub parent page by name, and resolve Hub Config descriptions by exact-name lookup (semantic; capped at ≤25 results, no pagination).
+- `fetch` — read a page's content, or a database / data source's **schema** (it does NOT return a data source's rows).
 - `notion-create-pages` — add rows (a new Hub Config description, a new client/task, etc.).
 - `notion-update-page` — update a row's properties or page body.
 - `notion-update-data-source` — amend schema (add/rename a property). `/hub-configure` only.
 - `notion-create-view` — create a saved view. `/hub-configure` only.
+
+## Connector read limits (Notion MCP) — load-bearing
+
+The available Notion connector has **no bulk row-read and no row delete** for data sources. Verified against the live hub (2026-06-17):
+
+- `fetch` on a database/data source returns its **schema only**, never its rows.
+- `search` is **semantic and capped at ≤25 results with no pagination**, and a "give me every row of this Area" query returns a relevance-ranked mix, not a clean complete set. **Exact-name** lookups (search a specific field/section name, take the exact-title match) are reliable; bulk enumeration is not.
+- There is **no `query_data_sources` / list-rows tool**, and **no way to archive or delete a database row** via the connector — only the user can, in the UI.
+
+The skills are built around this:
+1. The **field list** is authoritative from live DB introspection (`fetch` on each DB's data source returns the full property schema — reliable).
+2. **Descriptions** are resolved per field/section by exact-name `search` against Hub Config, cached per run — never by reading the whole store.
+3. **Row removal is a guided manual step** (the demo seed; a dropped field's orphaned Hub Config row): the skill identifies the rows, asks the user to delete them in the UI, and verifies before continuing.
+
+If a future connector exposes a list-rows/query or archive tool, the skills can use it directly — nothing depends on its absence beyond these read/delete workarounds.
 
 ## Settled design points
 
