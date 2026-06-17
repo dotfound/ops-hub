@@ -39,7 +39,7 @@ Full detail in `references/first-setup.md`. The sequence, in order:
 1. **Notion check** — probe the Notion MCP; conduct connecting it if missing (required before anything else).
 2. **Locate the hub** — shared startup; if not found, tell the user to duplicate the published template (their one click), wait, re-locate. Reads only; nothing is written here.
 3. **Verify + relation-integrity check** — confirm the 4 DBs + 2 stores; re-toggle any cross-DB relation that degraded to one-way (a safety net).
-4. **Connect + discover** — the guided "where does each kind of client context live for you today?" conversation; bin each named source connector-backed (probe + conduct-connect) or manual/paste; assemble a light source inventory.
+4. **Connect + discover** — one guided "connect the tools that hold your client info (email, files, calendar, task tracker, chat), and name anything that can't be connected" ask; no slow per-tool probing; assemble a light source inventory.
 5. **Shaping interview** — per-DB recommend-and-adjust walk (Clients → Projects → Tasks → Pipeline → body sections). See `references/shaping-and-amend.md`.
 6. **Amend** — one preview, then on approval the run's first writes: mark setup in-progress, then apply every delta. See `references/shaping-and-amend.md`.
 7. **Open the New Client form to public** — a guided manual step: walk the user through the Notion UI to make the form submittable by anyone with the link, then confirm by eye. Not an API write.

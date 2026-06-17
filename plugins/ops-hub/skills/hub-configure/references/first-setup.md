@@ -21,16 +21,20 @@ Confirm the parent page holds the expected children: the 4 DBs (Clients, Project
 
 ## 4. Connect + discover
 
-A guided conversation, not a silent probe. Ask the user **where each kind of client context lives for them today**, prompted by category so nothing is missed:
+**One guided ask, not a tool-by-tool interview.** Interrogating the user category by category and probing each named connector with a real call is slow: the user waits while every probe runs (four named Google tools is four round-trips, plus a connect-and-re-probe for any that are off). Instead, ask once, up front, for the user to connect everything that holds their client information, prompted by category with examples so nothing is forgotten:
 
-> task tracking · client folders / files · emails · comms (chat) · calendar · in-head or spreadsheet
+> Connect the tools where your client information lives, in your Cowork connectors. For example:
+> - **Email** (Gmail, Outlook)
+> - **Files and folders** (Google Drive, Dropbox, OneDrive)
+> - **Calendar** (Google Calendar)
+> - **Task or project tracking** (Trello, Asana, Notion, Linear)
+> - **Team chat** (Slack)
+>
+> Also tell me about anything that holds client information but can't be connected (a spreadsheet, a board with no connector, notes in your head), so I know you'll paste those in later. Only Notion is strictly required.
 
-For each source the user names, bin it:
+**Do not probe each connector with a real API call.** That is what makes the user wait, and it is unnecessary at setup: a connector that is connected but mis-scoped surfaces clearly when a skill actually uses it. Take the user's confirmation plus a **fast check of which connectors are now available** (the tool registry, not a live query), and move on.
 
-- **Connector-backed** (Gmail, Drive, Calendar): probe with a cheap real call; if absent, **conduct-connect** it (instruct + wait + re-probe, same OAuth boundary as Notion).
-- **No connector** (Trello, a spreadsheet, in-their-head): flag it a **manual / paste source** so the user knows they'll paste it into the populating skills.
-
-Only **Notion is required**; everything else follows what the user names. Assemble a **light source inventory**: a coarse `source → connected | manual` list (e.g. `Gmail, Drive (connected) · Trello, retainer spreadsheet (manual)`). This is *not* a per-field data-source map (that drifts and was retired); it is a one-line memory of what's wired up, persisted in `(System, Sources)` at step 9.
+Assemble a **light source inventory**: a coarse `source → connected | manual` list (e.g. `Gmail, Drive, Calendar (connected) · retainer spreadsheet (manual)`), persisted in `(System, Sources)` at step 9. This is *not* a per-field data-source map (that drifts and was retired); it is a one-line memory of what is wired up. The OAuth boundary still holds: the skill conducts connecting (instruct, wait, confirm); it never clicks OAuth itself.
 
 ## 5. Shaping interview
 
