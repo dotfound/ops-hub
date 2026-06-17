@@ -44,6 +44,7 @@ The hub is shaped openly: the user may rename fields, add their own, or drop one
 - **Resolve live, never hardcode.** Re-resolve the hub and its IDs by name every run.
 - **Match by name + description, never by column position.**
 - **On genuine ambiguity, confirm with the user. Do not guess.**
+- **Orientation is silent; keep the user's view plain.** The locate / read-store / introspect / relation-check routine above is internal plumbing: run it without narrating it to the user. Don't expose internal identifiers or mechanics: page / data-source IDs, `collection://` URIs, schema DDL (`ALTER COLUMN …`), raw schema dumps, or connector-limit detail. Talk about fields by name and purpose. This doesn't gag necessary user-facing content: questions, the shaping proposal, the amend preview, guided manual steps, and errors still appear, just phrased in the user's terms (e.g. "I couldn't find your hub," not a raw ID); a field's type may be named when the user is choosing or confirming it. Surface internals only on an explicit debugging request.
 - **Required anchors may be renamed but not deleted.** Everything else is open.
 - **Writing a select/status value:** it must be one of the property's existing options (from introspection). If the input uses a value that isn't an option, map it to the nearest valid option, preserve the original wording in a free-text field or the body, and surface the mapping in the preview. Do not create new options unless the user approves.
 
