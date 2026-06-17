@@ -64,15 +64,11 @@ Tell the user why, plainly: "Your hub includes a New Client form so new clients 
 
 The banner updates to reflect the new setting, so the user confirms by eye. (Optional extra check: open the form link in a private / incognito window and submit a test entry, which creates a Clients row they can delete afterwards.) Wait for the user to confirm before moving on. Never assert the form is public; rely on their visual confirmation.
 
-## 8. Clear the demo seed (guided manual delete)
+## 8. Tidy the hub page (guided, first-setup only)
 
-The template ships a 🤖-marked demo seed (a `🤖`-prefixed client + its related project, tasks, and a pipeline item) so relations and views render on duplication. Clear it now, **first-setup only**. The connector **cannot delete database rows** (only the user can, in the UI), so this is a **conducted** step, not a performed one:
+One last tidy before finishing. A fresh duplicate still carries the template's own boilerplate in the hub page body (the "Template hub. Duplicate this whole page…" note). **Offer to remove it**, plainly: "Last thing: your hub still has the template's setup note near the top. Want me to tidy that away?" On a yes, edit it out of the page body; on a no, leave it untouched.
 
-- Find the seed **structurally** and **capture the whole set up front**: locate the `🤖`-prefixed seed client, walk its relations to gather the linked project, tasks, and pipeline item, and note every record (with its ID, for this run) **before any deletion** — once the client is gone you can no longer walk its relations to find the rest. Don't match on hardcoded names or IDs.
-- **Present the exact records** (with their page links) and ask the user to delete them, framing it plainly: "Your hub came with a few sample records (a made-up client, a project, and some tasks) just so it didn't look empty. Now that you're set up, let's clear them so only your real data is left. Could you delete these in Notion? They go to the trash, so they're easy to get back if needed." Never ask them to delete a post-duplication record they may already have added.
-- **Verify every record is gone, not just the client.** After the user deletes, re-check each captured seed record across all four DBs. (Real case from a run: the client, project, and pipeline item deleted cleanly but one seed **task** survived — re-checking only the client would have missed it and written the marker over a leftover.) Write the marker (step 9) only once **all** captured records are confirmed gone. This keeps "marker present ⇒ seed fully cleared" honest.
-
-This runs only when the marker is absent (mode detection gates it). It never runs on a configured hub.
+This runs only when the marker is absent (mode detection gates it). It never runs on a configured hub, which has no template note left to remove.
 
 ## 9. Write the marker (and the section index)
 
@@ -84,10 +80,8 @@ The commit point. Write the `Area = System` rows (per `system-state-and-recovery
 - Write `(System, Setup Date)` = today.
 - Write `(System, Client Body Sections)` and `(System, Project Body Sections)` = the final ordered ` | `-delimited section list for each body (the documented default, or as reshaped in the interview). These index rows are how the body skills enumerate sections reliably; write them whether or not the user reshaped, so they're always present and authoritative.
 
-Order matters: seed cleared (step 8) **then** marker (step 9), so "marker present" always means fully set up and seed gone.
+The marker is the final write of setup: it lands only after every delta (step 6) and the page tidy (step 8), so "marker present" always means a fully set-up hub.
 
-## 10. Tidy up + confirm + handoff
+## 10. Confirm + handoff
 
-The fresh duplicate still carries the template's own boilerplate in the hub page body (the "Template hub. Duplicate this whole page…" note). **Offer to remove it** now the hub is set up, plainly: "Your hub still has the template's setup note near the top. Want me to tidy that away?" On a yes, edit it out of the page body; on a no, leave it untouched.
-
-Then recap what changed, in plain terms: the fields you adjusted, the form opened (pending their visual confirm), the sample data cleared, the tools connected, and what they can do next. Finally **offer to chain into `/client-create`** for the user's first real client, so setup flows straight into first use.
+Recap what changed, in plain terms: the fields you adjusted, the form opened (pending their visual confirm), the template note tidied, the tools connected, and what they can do next. Then **offer to chain into `/client-create`** for the user's first real client, so setup flows straight into first use.

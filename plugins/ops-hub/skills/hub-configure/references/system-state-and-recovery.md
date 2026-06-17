@@ -29,7 +29,7 @@ Right after fetching the hub the user gave you, read the `(System, Setup Status)
 - **`setup-complete`** → **configured** → ask the user: *connect / verify this machine* or *evolve the shape* (reshape). Never guess which; the hub looks identical to every person and machine.
 - **`in-progress`** → **interrupted** → tell the user a prior setup didn't finish, and offer to resume. Resuming is just re-running first setup from the top: every step is idempotent and reads live, so it walks past what's already done and finishes the tail. Offer the fast version (skip what's plainly applied) or the full re-walk.
 
-**Do not fetch the demo seed to corroborate the mode.** By construction the seed and the marker move together (the seed is cleared as the last setup step, just before the marker is written), so Setup Status decides on its own: marker absent means fresh, marker present means done. The seed is located and cleared later, at first-setup step 8, the only place its presence actually matters. Reading it during mode detection is a wasted search on the critical path.
+**Setup Status is the only signal; there is nothing else to check.** There is no other state to corroborate it against, so don't go hunting for a second signal: marker absent means fresh, marker present means done. Reading anything more during mode detection is a wasted search on the critical path.
 
 ## Why re-run-from-top is always safe (no checkpoint machine)
 
@@ -37,7 +37,7 @@ There is deliberately **no checkpoint state machine**. Re-running from the top i
 
 1. **The marker is written last** (the commit point). Bail before it and a re-run sees "not configured" (or "in-progress") and resumes; nothing falsely reads as done.
 2. **Nothing is written before the commit.** Orientation, connect, and shaping are all read-and-talk; schema deltas are collected, previewed, and written in one go only on approval. Bail any time before that approval and nothing at all has been written (not even the in-progress marker): no half-mutated schema, no orphaned setup state.
-3. **Every step is idempotent and reads live.** A re-walk shows the already-amended shape (so the user simply confirms it), the relation check finds healthy relations, the marker-based seed-find clears only whatever demo records remain.
+3. **Every step is idempotent and reads live.** A re-walk shows the already-amended shape (so the user simply confirms it), and the relation check finds healthy relations.
 
 Worst case is repetition, not corruption.
 
@@ -53,6 +53,6 @@ Notion has no transactions, so there is **no rollback**. On any write failure:
 
 If the user stops partway:
 
-- **Don't write `setup-complete`.** Report what's applied: schema deltas that landed are *their shape now* (kept, not reverted); an un-cleared seed is harmless demo data.
+- **Don't write `setup-complete`.** Report what's applied: schema deltas that landed are *their shape now* (kept, not reverted).
 - Tell them re-running `/hub-configure` resumes from where they are (it reads live and finishes the tail).
 - If the commit had begun and `Setup Status` was already set to `in-progress` (step 6), leave it; that is what triggers the resume offer next time.

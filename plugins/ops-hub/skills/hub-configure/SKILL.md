@@ -5,7 +5,7 @@ description: Use when standing up, connecting to, or reshaping the Ops Hub, e.g.
 
 # hub-configure
 
-The setup conductor for the Ops Hub. The hub ships as a published Notion template the user duplicates in one click; this skill does everything after that click: locates the duplicated hub, connects the user's sources, walks a shaping interview so the user reshapes the default schema to their own, applies the deltas to both the Notion schema and the Hub Config descriptions, opens the New Client form, clears the demo seed, and writes the durable marker that tells every other skill the hub is ready. Re-runnable forever to evolve the shape or connect a new machine.
+The setup conductor for the Ops Hub. The hub ships as a published Notion template the user duplicates in one click; this skill does everything after that click: locates the duplicated hub, connects the user's sources, walks a shaping interview so the user reshapes the default schema to their own, applies the deltas to both the Notion schema and the Hub Config descriptions, opens the New Client form and writes the durable marker that tells every other skill the hub is ready. Re-runnable forever to evolve the shape or connect a new machine.
 
 **Core principle:** duplicate-then-amend, never build from scratch. The structure arrives correct by duplication; this skill only applies the user's deltas on top, batched and preview-first. It branches on the *state of the shared hub*, never on who or which machine is running it. Everything it writes is reversible-by-re-run: **nothing is written until the user approves the amend** (orientation, connect, and shaping are all read-and-talk), the completion marker is written last, schema deltas are batched, and every step reads live and is idempotent.
 
@@ -32,7 +32,7 @@ The whole orientation is three quick moves, then you are talking to the user:
 
 That is the whole orientation: two Notion calls (one `fetch`, one `search`), no hub-resolution and nothing read up front. Everything else the spine describes is deferred to the step that consumes it: per-DB introspection during the shaping walk, description resolution during a reshape, and the Skill Notes directives loaded only on a configured hub (a fresh duplicate ships ⚙️ Skill Notes empty). Read those parts of `_shared/shared-startup.md` when you reach them, and apply any Skill Notes directives as authoritative overrides.
 
-This is the **only** skill that mutates schema (`notion-update-data-source`), creates or adjusts views, and owns the `Area = System` namespace. Its destructive writes (schema deltas, seed archive) are always batched and preview-first.
+This is the **only** skill that mutates schema (`notion-update-data-source`), creates or adjusts views, and owns the `Area = System` namespace. Its destructive writes (schema deltas) are always batched and preview-first.
 
 Load each reference as its phase begins, not upfront:
 - `references/system-state-and-recovery.md` — the `Area = System` rows, mode detection, and the re-run / write-failure recovery model. Read this **first**, to detect the mode.
@@ -43,7 +43,7 @@ Load each reference as its phase begins, not upfront:
 
 Detect the mode from the shared hub (per `references/system-state-and-recovery.md`), then act:
 
-- **Not configured** (no hub, or hub found with the demo seed and no `setup-complete` marker) → **first setup** (the heavy path). See `references/first-setup.md`.
+- **Not configured** (no hub, or a hub with no `setup-complete` marker) → **first setup** (the heavy path). See `references/first-setup.md`.
 - **Configured** (`(System, Setup Status) = setup-complete`) → **ask the user which** they want:
   - *Connect / verify this machine* (a teammate joining, or the user on a new laptop): probe + conduct-connect this machine's connectors, confirm the hub is reachable, done. No duplication, no reshape.
   - *Evolve the shape* (a targeted reshape): see the reshape path below.
@@ -62,7 +62,7 @@ Full detail in `references/first-setup.md`. The sequence, in order:
 5. **Shaping interview** — per-DB recommend-and-adjust walk (Clients → Projects → Tasks → Pipeline → body sections). See `references/shaping-and-amend.md`.
 6. **Amend** — one preview, then on approval the run's first writes: mark setup in-progress, then apply every delta. See `references/shaping-and-amend.md`.
 7. **Open the New Client form to public** — a guided manual step: walk the user through the Notion UI to make the form submittable by anyone with the link, then confirm by eye. Not an API write.
-8. **Clear the demo seed** — find the 🤖 seed client and its related records structurally, then have the user delete them in the UI (the connector can't delete rows) and verify they're gone. First-setup only.
+8. **Tidy the hub page** — offer to remove the leftover template note ("Template hub. Duplicate this whole page…") from the hub body. First-setup only.
 9. **Write the marker** — flip `Setup Status` to `setup-complete`; record Hub Name, Sources, Setup Date in the `Area = System` rows.
 10. **Tidy + confirm + handoff** — offer to strip the leftover template note from the hub page body, recap in plain terms, then offer to chain into `/client-create` for the first real client.
 
@@ -76,7 +76,7 @@ Four things this skill cannot do itself, so it *conducts* them (instruct, wait, 
 - **The user duplicating the template** — their one click; never automated (automating it abandons the spiked published-template relation-remap).
 - **OAuth consent** — a hard security boundary; a skill can't click an OAuth screen.
 - **Making the New Client form public** — a guided manual toggle in the Notion UI; the form's sharing state isn't reliably set-and-verified through the API, so the user makes it submittable-by-anyone and confirms by eye.
-- **Deleting database rows** (the demo seed; a dropped field's orphaned Hub Config row) — the connector can drop a *property* but **cannot archive or delete a *row***, so the user deletes these in the UI and the skill verifies before continuing.
+- **Deleting database rows** (a dropped field's orphaned Hub Config row) — the connector can drop a *property* but **cannot archive or delete a *row***, so the user deletes it in the UI and the skill verifies before continuing.
 
 Everything else it **performs** directly (relation repair, schema property add / rename, marker + inventory writes via row *creation*, descriptions, view adjustments), preview-first where destructive.
 
@@ -87,18 +87,17 @@ Everything else it **performs** directly (relation repair, schema property add /
 - **Never add or delete whole databases**, and never invite the user to. The 4 DBs are the backbone every skill resolves against. Shaping happens *within* them (rename the DB; rename / drop / add its fields).
 - **Required anchors are rename-only, never droppable:** each DB's title and the Client relation on Projects / Tasks / Pipeline. Refuse a drop; offer a rename.
 - **Batch → preview → write.** Collect every delta, show one preview, write only on explicit approval. **Nothing at all is written before that approval, not even an internal setup marker.** No surprise schema writes.
-- **The marker is written last.** Never write `setup-complete` before the seed is cleared and every delta is applied. This is what makes re-run-from-top safe.
+- **The marker is written last.** Never write `setup-complete` before every delta is applied. This is what makes re-run-from-top safe.
 - **`Area = System` is reserved and internal.** Only this skill writes it; it is excluded from the shaping walk and the annotation flow.
 - **Formula expressions can't be set via the API** — create everything else, flag any formula field for a manual paste.
 - **Verify-and-report on any write failure; never claim false success.** Notion has no transactions, so there is no rollback: report exactly what landed and let a re-run reconcile.
-- **First-setup-only steps stay first-setup-only:** clearing the seed never runs on a configured hub.
+- **First-setup-only steps stay first-setup-only:** the template-note tidy never runs on a configured hub.
 
 ## What this does NOT do
 
 - Populate content (no clients, projects, or tasks), except the optional `/client-create` handoff at the end.
 - Build the hub from scratch, or manage / republish the published template.
 - Add or delete whole databases.
-- Touch real client data when clearing the seed (it is marker-based, demo records only).
 
 ## Learning loop (after setup or a reshape is written)
 

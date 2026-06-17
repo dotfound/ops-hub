@@ -70,7 +70,7 @@ The available Notion connector has **no bulk row-read and no row delete** for da
 The skills are built around this:
 1. The **field list** is authoritative from live DB introspection (`fetch` on each DB's data source returns the full property schema — reliable).
 2. **Descriptions** are resolved per field/section by exact-name `search` against Hub Config, cached per run — never by reading the whole store.
-3. **Row removal is a guided manual step** (the demo seed; a dropped field's orphaned Hub Config row): the skill identifies the rows, asks the user to delete them in the UI, and verifies before continuing.
+3. **Row removal is a guided manual step** (e.g. a dropped field's orphaned Hub Config row): the skill identifies the rows, asks the user to delete them in the UI, and verifies before continuing.
 4. **Body-section lists** (Client Body / Project Body) aren't DB properties, so they can't be introspected, and they can't be enumerated by search either. They live in a single `(System, … Sections)` **index row** that `/hub-configure` writes and maintains — read by one exact-name lookup, with the documented default in the shared body specs (`client-body.md` / `project-body.md`) as the fallback.
 
 If a future connector exposes a list-rows/query or archive tool, the skills can use it directly — nothing depends on its absence beyond these read/delete workarounds.
