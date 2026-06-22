@@ -87,4 +87,5 @@ The app does **not** edit `sources` — that concept is kept out of the setup UI
 - Start from `config.default.json`, so the emitted `records` is always complete (defaults for anything the user didn't touch).
 - Track `renames` as the user edits a label in place (don't emit a rename if `from == to`).
 - Track `recordRenames` likewise as the user edits a database name (don't emit if `from == to`); the record key stays fixed (`client` / `project` / `task` / `pipeline`).
+- Preserve inline type hints in each `purpose`. If the editor strips them (e.g. `(select: Prospect / Active / …)` becomes `(Prospect / Active / …)`, or a bare `(select)` drops entirely), hub-setup tolerates it by keeping the live purpose, so no meaning is lost; even so, emit the hints verbatim so the app and the config page stay identical.
 - No Notion access needed — the default shape is known up front; the skill does all live work.
