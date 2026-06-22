@@ -1,0 +1,118 @@
+{
+  "_note": "Shipped default for the Ops Hub config page (Notion page titled '⚙️ Hub Config'). Mirrors the [TEMPLATE] Notion Operations Hub schema. Teams reshape this by running hub-setup, never by hand-editing. Every field label starts with an emoji; the same column name uses the same emoji across tables. Body sections each carry a heading + purpose so a team (and the composing skill) knows what each is for. Structural fields (titles + relations) are NOT listed — skills resolve them by role (type/target), not by label. See hub-conventions.md.",
+  "version": 1,
+  "configPageTitle": "⚙️ Hub Config",
+  "cachePath": "~/.claude/ops-hub/hub-cache.json",
+  "stamp": {
+    "format": "_Last enriched: {date} · {skill}_",
+    "position": "first line of the managed body, above the first section"
+  },
+  "manualNotes": {
+    "heading": "📝 Manual Notes",
+    "text": "Use this section for any notes you want to preserve through future context refreshes. The update skill will never touch anything below this heading."
+  },
+  "records": {
+    "client": {
+      "fields": {
+        "status": { "label": "📋 Status", "purpose": "Engagement state (select: Prospect / Active / Recently Lapsed / Lapsed / TBC). Drives Engagement Overview." },
+        "sector": { "label": "🏷️ Sector", "purpose": "Client's industry / sector (select)." },
+        "main_contact_name": { "label": "👤 Main Contact Name", "purpose": "Primary contact name; mirrors the ⭐ row of the Contacts body table." },
+        "main_contact_email": { "label": "👤 Main Contact Email", "purpose": "Primary contact email." },
+        "main_contact_role": { "label": "👤 Main Contact Role", "purpose": "Primary contact role / title." },
+        "hourly_rate": { "label": "💷 Hourly Rate", "purpose": "Default hourly rate for this client (money)." },
+        "drive_folder": { "label": "📁 Drive Folder URL", "purpose": "URL to the client's file folder; the root for relative source locations." },
+        "lead_source": { "label": "🔗 Lead Source", "purpose": "How the client was acquired (select)." },
+        "lead_source_detail": { "label": "🔗 Lead Source Detail", "purpose": "Free-text detail on the lead source." },
+        "original_agreement_date": { "label": "📅 Original Agreement Date", "purpose": "Date the master agreement was signed." },
+        "agreement_url": { "label": "📝 Agreement URL", "purpose": "Link to the signed master agreement." },
+        "registered_company_name": { "label": "🏢 Registered Company Name", "purpose": "Full legal company name (for contracts)." },
+        "registered_company_address": { "label": "📍 Registered Company Address", "purpose": "Registered address (for contracts)." },
+        "company_number": { "label": "🏢 Company / Charity Number", "purpose": "Companies House or charity registration number." },
+        "signatory_name": { "label": "✍️ Signatory Name", "purpose": "Name of the person who signs contracts." },
+        "signatory_email": { "label": "✍️ Signatory Email", "purpose": "Email of the contract signatory." },
+        "signatory_position": { "label": "✍️ Signatory Position", "purpose": "Job title of the contract signatory (stated on contracts)." },
+        "invoice_email": { "label": "💰 Invoice Email", "purpose": "Where invoices are sent." },
+        "invoice_cc": { "label": "💰 Invoice CC", "purpose": "Anyone to copy on invoice emails." },
+        "invoice_instructions": { "label": "💰 Invoice Instructions", "purpose": "PO numbers / references required by the client's invoicing process." }
+      },
+      "body": [
+        { "heading": "👥 Contacts", "purpose": "Who the client's people are: names, roles, emails, with the primary contact starred." },
+        { "heading": "📈 Engagement Overview", "purpose": "At-a-glance state: status, in-flight projects, open pipeline, active tasks, last invoice." },
+        { "heading": "📚 Engagement History", "purpose": "Completed projects and their values, plus a short narrative of the engagement so far." },
+        { "heading": "🛠 Tech Stack & Other Tools", "purpose": "Tools and platforms the client uses, inferred from available signals." },
+        { "heading": "💬 Communications Log", "purpose": "Recent themes and the last few interactions (emails and meetings)." },
+        { "heading": "🎯 Opportunities & Risks", "purpose": "Where there's room to help, and what could go wrong." },
+        { "heading": "📝 Manual Notes", "purpose": "Human-owned notes; never composed or edited by skills." }
+      ],
+      "sources": [
+        "Linked records: the client's Projects, Tasks, and Pipeline rows (found via the structural relations).",
+        "Invoicing: the connected invoicing/accounting source — for Engagement History values and totals.",
+        "Email: the connected mailbox — threads with the client's contacts and at the client's domain (default 2-year look-back).",
+        "Calendar: the connected calendar — meetings with the client's contacts/domain (default 2-year look-back).",
+        "Files: the client's Drive folder (from drive_folder); read any context note at the folder root."
+      ]
+    },
+    "project": {
+      "fields": {
+        "status": { "label": "📋 Status", "purpose": "Project state (select: Invoiced / Complete, Ready to Invoice, Active, On Hold, Pending). project-update may propose a change." },
+        "billing_type": { "label": "💳 Billing Type", "purpose": "How the project is billed (select: Fixed Fee / T&M)." },
+        "invoicing_rule": { "label": "🧾 Invoicing Rule", "purpose": "When invoices are raised (select: Specific Date / On Completion / 50/50 / Monthly)." },
+        "fee": { "label": "💷 Fee", "purpose": "Fixed fee amount (money); set for fixed-fee projects." },
+        "hourly_rate": { "label": "💷 Hourly Rate", "purpose": "Hourly rate (money); set for time-and-materials projects." },
+        "sow_url": { "label": "📄 SOW URL", "purpose": "Link to the signed SOW." }
+      },
+      "body": [
+        { "heading": "🧭 Context", "purpose": "What's prompting the work and the boundary of what this project covers." },
+        { "heading": "🎯 Scope", "purpose": "Outcomes at completion, plus the definition of done." },
+        { "heading": "📦 Deliverables", "purpose": "The concrete artefacts and pieces of work handed over." },
+        { "heading": "🚫 Out of scope", "purpose": "What's explicitly not included." },
+        { "heading": "🔗 Assumptions & dependencies", "purpose": "Conditions the price and timeline rest on, and what the client must provide." },
+        { "heading": "🗓 Timeline", "purpose": "Phases, durations, and the go-live anchor." },
+        { "heading": "👥 Project team", "purpose": "Who's running it on each side." },
+        { "heading": "📝 Manual Notes", "purpose": "Human-owned notes; never composed or edited by skills." }
+      ],
+      "sources": [
+        "The brief or SOW you're given — the primary source for a project.",
+        "Linked records: the project's Tasks (via the structural relation) and its Client.",
+        "SOW/brief files: the client's folder, Admin subfolder.",
+        "Task comments: read via the connector for progress (used by project-update)."
+      ]
+    },
+    "task": {
+      "fields": {
+        "status": { "label": "📋 Status", "purpose": "Task state (select: Backlog / To Do / In Progress / Blocked / Done; new tasks default to Backlog)." },
+        "effort": { "label": "⏱️ Effort", "purpose": "Estimated effort in hours (number)." },
+        "due_date": { "label": "📅 Due Date", "purpose": "Target date (date); set only if stated." },
+        "assignee": { "label": "👤 Assignee", "purpose": "Person responsible (defaults to you)." }
+      },
+      "body": [
+        { "heading": "User story", "purpose": "Who wants this and why, in one line." },
+        { "heading": "Background", "purpose": "Context the doer needs." },
+        { "heading": "Task description", "purpose": "What to do." },
+        { "heading": "Definition of done", "purpose": "How we know it's complete." },
+        { "heading": "Useful context", "purpose": "Links, references, anything that helps." }
+      ],
+      "sources": [
+        "The text you're given: brief, SOW, meeting transcript, or notes."
+      ]
+    },
+    "pipeline": {
+      "fields": {
+        "status": { "label": "📋 Status", "purpose": "Deal stage (select: In Progress / Quoting / Quoted / Won / Lost / Declined / On Hold; open = not Won/Lost/Declined)." },
+        "prospect_name": { "label": "🏢 Prospect Name", "purpose": "Free-text prospect / company name (used before a Client record exists)." },
+        "estimate": { "label": "💷 Estimate", "purpose": "Quoted value (money)." },
+        "weighted_value": { "label": "💷 Weighted Value", "purpose": "Estimate × Probability (formula; READ-ONLY — never write)." },
+        "probability": { "label": "📊 Probability", "purpose": "Close likelihood (select: 10% / 25% / 50% / 75% / 90%)." },
+        "service_type": { "label": "🛠️ Service Type", "purpose": "Type(s) of work (multi-select: Audit / Automation / Training / Maintenance / Other)." },
+        "lead_source": { "label": "🔗 Lead Source", "purpose": "How the lead arrived (select)." },
+        "last_contacted": { "label": "📅 Last Contacted", "purpose": "Date of last contact (date)." },
+        "date_closed": { "label": "📅 Date Closed", "purpose": "Date the deal closed, won or lost (date)." },
+        "reason_for_loss": { "label": "❌ Reason for Loss", "purpose": "Why a deal was lost (select)." },
+        "sow_url": { "label": "📄 SOW Doc URL", "purpose": "Link to the SOW for this deal." },
+        "notes": { "label": "📝 Notes", "purpose": "Free-text notes on the deal." }
+      },
+      "body": [],
+      "sources": []
+    }
+  }
+}

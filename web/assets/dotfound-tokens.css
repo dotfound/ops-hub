@@ -1,0 +1,573 @@
+/* ============================================================
+   dotfound — Design Tokens
+   Dark-mode first. Aesthetic: Linear / Vercel — calm, editorial.
+   All text combinations meet WCAG AA on their intended surface.
+   ============================================================ */
+
+/* ---- Fonts ------------------------------------------------ */
+/* Geometric humanist sans for UI + display. Tabular mono for numbers. */
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* ========== TYPE ========== */
+  --font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, monospace;
+
+  /* Modular type scale — 1.2 minor third, tuned for dashboards */
+  --text-2xs: 11px;   /* micro labels, legend captions */
+  --text-xs:  12px;   /* table rows, chart axes */
+  --text-sm:  13px;   /* secondary UI, dense tables */
+  --text-md:  14px;   /* body default */
+  --text-base:15px;   /* comfortable body */
+  --text-lg:  17px;   /* subsection lead */
+  --text-xl:  20px;   /* card titles */
+  --text-2xl: 24px;   /* section titles */
+  --text-3xl: 30px;   /* KPI numbers (med) */
+  --text-4xl: 40px;   /* KPI numbers (large) */
+  --text-5xl: 56px;   /* display */
+
+  --lh-tight:   1.1;
+  --lh-snug:    1.3;
+  --lh-normal:  1.5;
+  --lh-relaxed: 1.7;
+
+  --tracking-tight:  -0.02em;
+  --tracking-snug:   -0.011em;
+  --tracking-normal:  0;
+  --tracking-wide:    0.04em;
+  --tracking-caps:    0.08em;
+
+  --fw-light:    300;
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+  /* ========== COLOR — RAW SCALES ========== */
+  /* Slate: near-black → grey, our elevation ladder.
+     Hue biased very slightly cool (~240) to harmonize with the brand purple. */
+  --slate-1000: #08090C;  /* deepest, window background */
+  --slate-950:  #0B0D12;  /* app background (base) */
+  --slate-900:  #0F1218;  /* raised surface */
+  --slate-850:  #151821;  /* overlay / popover */
+  --slate-800:  #1C202B;  /* hover on raised */
+  --slate-750:  #242937;  /* pressed / strong border */
+  --slate-700:  #2E3342;  /* divider strong */
+  --slate-600:  #3C4254;  /* muted icon on dark */
+  --slate-500:  #565D73;  /* disabled */
+  --slate-400:  #7B8299;  /* muted text (AA on 950) */
+  --slate-300:  #9AA1B5;  /* secondary text */
+  --slate-200:  #C4C9D6;  /* primary text dimmed */
+  --slate-100:  #E6E8EF;  /* primary text */
+  --slate-50:   #F4F5F8;  /* high-emphasis text */
+
+  /* Brand purple — evolved: slightly cooler & brighter than #5A00FF so
+     it reads cleanly on near-black without the washed-out navy problem. */
+  --purple-50:  #F2EBFF;
+  --purple-100: #E2D1FF;
+  --purple-200: #C7A8FF;
+  --purple-300: #A982FF;
+  --purple-400: #8E5CFF;  /* primary accent on dark — AA large on slate-950 */
+  --purple-500: #7A3AFF;  /* brand default */
+  --purple-600: #6822F5;  /* pressed */
+  --purple-700: #5412C7;  /* hover→pressed deep */
+  --purple-800: #3F0E96;
+  --purple-900: #2B0968;
+
+  /* Status — tuned for dark bg, desaturated just enough to feel editorial */
+  --green-400:  #3FCF8E;   /* success text/icon */
+  --green-500:  #22B77A;
+  --green-900:  #0F2E22;   /* success bg */
+
+  --amber-400:  #F5B849;   /* warning */
+  --amber-500:  #E0A034;
+  --amber-900:  #3A2A0E;
+
+  --red-400:    #F6685E;   /* danger */
+  --red-500:    #E64A3F;
+  --red-900:    #3C1613;
+
+  --blue-400:   #5AB2FF;   /* info */
+  --blue-500:   #3D97ED;
+  --blue-900:   #0E2840;
+
+  /* Chart series — 4 distinguishable hues, safe together.
+     Kept distinct in hue, roughly equal luminance. */
+  --chart-1: var(--purple-400);  /* primary — brand */
+  --chart-2: #3FCF8E;            /* teal-green */
+  --chart-3: #F5B849;            /* amber */
+  --chart-4: #5AB2FF;            /* sky blue */
+
+  /* Sequential single-hue (purple) — for heatmaps / intensity */
+  --seq-1: #1A1333;
+  --seq-2: #2E1E5F;
+  --seq-3: #4A2E99;
+  --seq-4: #6A45D6;
+  --seq-5: #8E5CFF;
+  --seq-6: #B48EFF;
+
+  /* ========== SEMANTIC TOKENS ========== */
+  /* Surfaces — 4-step elevation ladder via color, not shadow */
+  --surface-base:    var(--slate-950);   /* app bg */
+  --surface-raised:  var(--slate-900);   /* cards, panels */
+  --surface-overlay: var(--slate-850);   /* popovers, menus */
+  --surface-sunken:  var(--slate-1000);  /* wells, code blocks */
+  --surface-hover:   var(--slate-800);
+  --surface-pressed: var(--slate-750);
+
+  /* Text */
+  --text-primary:   var(--slate-50);   /* 15.8:1 on base */
+  --text-secondary: var(--slate-300);  /* 8.3:1 on base */
+  --text-muted:     var(--slate-400);  /* 5.1:1 on base — AA */
+  --text-disabled:  var(--slate-500);
+  --text-inverse:   var(--slate-1000); /* on light/brand surfaces */
+  --text-accent:    var(--purple-300); /* links */
+  --text-on-brand:  #FFFFFF;
+
+  /* Borders */
+  --border-subtle:  rgba(255, 255, 255, 0.06);  /* barely-there divider */
+  --border-default: rgba(255, 255, 255, 0.09);  /* card edge */
+  --border-strong:  rgba(255, 255, 255, 0.14);  /* focused / emphasized */
+  --border-focus:   var(--purple-400);
+
+  /* Brand / accent — primary actions only */
+  --brand:          var(--purple-500);
+  --brand-hover:    var(--purple-400);
+  --brand-pressed:  var(--purple-600);
+  --brand-subtle:   rgba(138, 92, 255, 0.12);  /* tinted bg */
+  --brand-border:   rgba(138, 92, 255, 0.32);
+
+  /* Status — icon/text tier */
+  --success:        var(--green-400);
+  --warning:        var(--amber-400);
+  --danger:         var(--red-400);
+  --info:           var(--blue-400);
+
+  /* Alerts — background + border + text tuned together */
+  --alert-success-bg:     rgba(63, 207, 142, 0.10);
+  --alert-success-border: rgba(63, 207, 142, 0.28);
+  --alert-success-text:   #7EE3B0;
+
+  --alert-warning-bg:     rgba(245, 184, 73, 0.10);
+  --alert-warning-border: rgba(245, 184, 73, 0.28);
+  --alert-warning-text:   #F7CA78;
+
+  --alert-danger-bg:      rgba(246, 104, 94, 0.10);
+  --alert-danger-border:  rgba(246, 104, 94, 0.30);
+  --alert-danger-text:    #F89189;
+
+  --alert-info-bg:        rgba(90, 178, 255, 0.10);
+  --alert-info-border:    rgba(90, 178, 255, 0.28);
+  --alert-info-text:      #8BC9FF;
+
+  /* ========== SHAPE ========== */
+  --radius-xs: 2px;
+  --radius-sm: 4px;   /* inputs */
+  --radius-md: 6px;   /* cards, buttons */
+  --radius-lg: 8px;   /* cards, panels */
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-full: 9999px;
+
+  /* ========== SPACING ========== */
+  --space-0:  0;
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* ========== ELEVATION (used sparingly) ========== */
+  /* Hierarchy comes mostly from surface color; shadows only for lifted overlays. */
+  --shadow-none: none;
+  --shadow-sm:   0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md:   0 4px 14px rgba(0, 0, 0, 0.40), 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-lg:   0 14px 40px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.30);
+  --shadow-focus: 0 0 0 3px rgba(138, 92, 255, 0.35);
+
+  /* ========== MOTION ========== */
+  --ease-out:  cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast:  120ms;
+  --dur-med:   180ms;
+  --dur-slow:  260ms;
+
+  /* ========== Z ========== */
+  --z-dropdown: 1000;
+  --z-sticky:   1020;
+  --z-overlay:  1040;
+  --z-modal:    1060;
+  --z-toast:    1080;
+}
+
+/* ============================================================
+   LIGHT THEME — opt-in via <html data-theme="light">
+   Reference: Vercel marketing surfaces. Warm off-white base,
+   pure white cards (lifted = lighter), near-black text, neutral
+   black-alpha borders, accent purple shifted darker for AA,
+   status colours desaturated ~35% toward grey then darkened to
+   maintain readable contrast on white.
+
+   Every semantic token in :root is mirrored here. Raw scales
+   (slate-*, purple-*, green-* …) are NOT overridden — components
+   should reference SEMANTIC tokens only. The raw scales remain
+   available for one-off needs (e.g. illustrations).
+   ============================================================ */
+[data-theme="light"] {
+  /* ---- Light-only raw values used below ----
+     Warm neutral ladder, biased ~30° hue (slight brown) so the
+     near-black text and the off-white base feel of-a-piece. */
+  --warm-50:   #FAFAF9;  /* base */
+  --warm-100:  #F4F2EE;  /* sunken / hover */
+  --warm-200:  #EBE8E2;  /* pressed */
+  --warm-300:  #D9D6D0;
+  --warm-400:  #B0ADA6;
+  --warm-500:  #8A8782;  /* disabled */
+  --warm-600:  #6B6863;  /* muted text — 4.7:1 on warm-50 */
+  --warm-700:  #4A4842;  /* secondary text */
+  --warm-800:  #2A2925;
+  --warm-900:  #1A1A18;  /* primary text — 16:1 on warm-50 */
+
+  /* Surfaces — Vercel model: lifted is LIGHTER, not darker.
+     Base off-white → cards pure white → wells tinted warm grey. */
+  --surface-base:    var(--warm-50);    /* #FAFAF9 */
+  --surface-raised:  #FFFFFF;           /* pure white cards */
+  --surface-overlay: #FFFFFF;           /* popovers/menus on shadow */
+  --surface-sunken:  var(--warm-100);   /* search input, code, wells */
+  --surface-hover:   var(--warm-100);
+  --surface-pressed: var(--warm-200);
+
+  /* Text — near-black primary, warm greys below */
+  --text-primary:   var(--warm-900);    /* 16:1 on base */
+  --text-secondary: var(--warm-700);    /* 8.4:1 */
+  --text-muted:     var(--warm-600);    /* 4.7:1 — AA */
+  --text-disabled:  var(--warm-500);
+  --text-inverse:   #FFFFFF;
+  --text-accent:    #5412C7;            /* darker purple — 7.4:1 on base */
+  --text-on-brand:  #FFFFFF;
+
+  /* Borders — neutral black alpha. Reads as natural pencil weight
+     against both warm-50 base and pure-white cards. */
+  --border-subtle:  rgba(0, 0, 0, 0.06);
+  --border-default: rgba(0, 0, 0, 0.09);
+  --border-strong:  rgba(0, 0, 0, 0.14);
+  --border-focus:   #6822F5;
+
+  /* Brand / accent — darker shift so it holds AA on light */
+  --brand:          #6822F5;            /* purple-600 — 5.4:1 on base */
+  --brand-hover:    #5412C7;            /* purple-700 */
+  --brand-pressed:  #3F0E96;            /* purple-800 */
+  --brand-subtle:   rgba(104, 34, 245, 0.08);
+  --brand-border:   rgba(104, 34, 245, 0.24);
+
+  /* Status — desaturated ~35% from dark values AND darkened so the
+     same colour name works as text/icon/border on white. */
+  --success:        #11955A;            /* was #3FCF8E */
+  --warning:        #B07418;            /* was #F5B849 — amber needs strong darken on white */
+  --danger:         #C7382E;            /* was #F6685E */
+  --info:           #2E7CC4;            /* was #5AB2FF */
+
+  /* Alerts — tinted background + matching border + AA-on-tint text.
+     Same shape as dark mode, mapped to the light values. */
+  --alert-success-bg:     rgba(17, 149, 90, 0.07);
+  --alert-success-border: rgba(17, 149, 90, 0.22);
+  --alert-success-text:   #0A6B40;
+
+  --alert-warning-bg:     rgba(176, 116, 24, 0.08);
+  --alert-warning-border: rgba(176, 116, 24, 0.24);
+  --alert-warning-text:   #7A4F10;
+
+  --alert-danger-bg:      rgba(199, 56, 46, 0.07);
+  --alert-danger-border:  rgba(199, 56, 46, 0.24);
+  --alert-danger-text:    #962A22;
+
+  --alert-info-bg:        rgba(46, 124, 196, 0.07);
+  --alert-info-border:    rgba(46, 124, 196, 0.22);
+  --alert-info-text:      #1E5A93;
+
+  /* Chart series — shifted darker so the same role colour reads
+     on a white plot background. Hue parity with dark mode. */
+  --chart-1: #6822F5;   /* brand purple */
+  --chart-2: #11955A;   /* green */
+  --chart-3: #B07418;   /* amber */
+  --chart-4: #2E7CC4;   /* blue */
+
+  /* Sequential single-hue — light → dark for white-bg heatmaps */
+  --seq-1: #F2EBFF;
+  --seq-2: #D6BDFF;
+  --seq-3: #A982FF;
+  --seq-4: #7A3AFF;
+  --seq-5: #5412C7;
+  --seq-6: #2B0968;
+
+  /* Shadows — lighter, but still reserved for overlays only.
+     The dark-mode rule "no shadows on cards" carries over. */
+  --shadow-sm:    0 1px 2px rgba(15, 18, 24, 0.06);
+  --shadow-md:    0 4px 14px rgba(15, 18, 24, 0.08), 0 1px 2px rgba(15, 18, 24, 0.04);
+  --shadow-lg:    0 14px 40px rgba(15, 18, 24, 0.14), 0 2px 6px rgba(15, 18, 24, 0.06);
+  --shadow-focus: 0 0 0 3px rgba(104, 34, 245, 0.22);
+}
+
+/* Smooth theme transitions on elements that switch surface/text.
+   Kept short (140ms) so it feels intentional, not animated. */
+html { color-scheme: dark; }
+html[data-theme="light"] { color-scheme: light; }
+@media (prefers-reduced-motion: no-preference) {
+  body, [data-theme-fade] {
+    transition: background-color 140ms var(--ease-out), color 140ms var(--ease-out), border-color 140ms var(--ease-out);
+  }
+}
+
+/* ============================================================
+   Base element defaults (opinionated)
+   ============================================================ */
+html, body {
+  background: var(--surface-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  line-height: var(--lh-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "ss01", "cv11";  /* Geist stylistic tweaks */
+}
+
+/* ============================================================
+   Semantic typography classes — apply directly or @extend.
+   ============================================================ */
+.df-display {
+  font-family: var(--font-sans);
+  font-size: var(--text-5xl);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-primary);
+}
+.df-h1 {
+  font-size: var(--text-4xl);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-primary);
+}
+.df-h2 {
+  font-size: var(--text-2xl);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tracking-snug);
+  color: var(--text-primary);
+}
+.df-h3 {
+  font-size: var(--text-xl);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-snug);
+  color: var(--text-primary);
+}
+.df-h4 {
+  font-size: var(--text-lg);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-snug);
+  color: var(--text-primary);
+}
+.df-body {
+  font-size: var(--text-md);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-normal);
+  color: var(--text-primary);
+}
+.df-body-sm {
+  font-size: var(--text-sm);
+  line-height: var(--lh-normal);
+  color: var(--text-secondary);
+}
+.df-caption {
+  font-size: var(--text-xs);
+  line-height: var(--lh-normal);
+  color: var(--text-muted);
+}
+.df-eyebrow {
+  font-size: var(--text-2xs);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.df-kpi {
+  font-family: var(--font-mono);
+  font-size: var(--text-4xl);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.df-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum", "zero";
+}
+.df-code {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  background: var(--surface-sunken);
+  color: var(--text-secondary);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+/* Focus ring — consistent everywhere */
+*:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-sm);
+}
+
+/* ============================================================
+   DECK SCALE — additive tokens for 16:9 sales decks at 1920×1080.
+   Reuses every colour, motion, and radii token from above. Only
+   the display type sizes, the stat type, and a slide grid are
+   added. Apply on slide content only. Do NOT use these in product UI.
+   ============================================================ */
+:root {
+  /* ----- 16:9 slide canvas ----- */
+  --slide-w:        1920px;
+  --slide-h:        1080px;
+  --slide-safe:     64px;                /* 64px margin all sides → 1792×952 safe area */
+  --slide-cols:     12;
+  --slide-gutter:   32px;
+  --slide-col:      calc((var(--slide-w) - 2 * var(--slide-safe) - (var(--slide-cols) - 1) * var(--slide-gutter)) / var(--slide-cols));
+
+  /* ----- Display type at slide scale ----- */
+  --slide-display-1:  100px;             /* title slide — single biggest moment */
+  --slide-display-2:  72px;              /* section header */
+  --slide-display-3:  48px;              /* content slide headline */
+  --slide-body:       28px;              /* slide body / supporting copy */
+  --slide-caption:    20px;              /* footer, source line */
+  --slide-eyebrow:    18px;              /* tracked-out micro label */
+
+  /* ----- Stat scale (big-number slides) ----- */
+  --slide-stat:        160px;            /* canonical: one giant number */
+  --slide-stat-label:  24px;             /* paired label below */
+
+  /* ----- Optional title/section radial glow ----- */
+  --slide-glow: radial-gradient(
+    ellipse 1100px 700px at 50% 28%,
+    rgba(138, 92, 255, 0.06) 0%,
+    transparent 65%
+  );
+}
+
+[data-theme="light"] {
+  /* Glow shifts slightly stronger on light (10%) and uses the deeper
+     light-mode brand purple so it doesn't read washed-out. */
+  --slide-glow: radial-gradient(
+    ellipse 1100px 700px at 50% 28%,
+    rgba(104, 34, 245, 0.10) 0%,
+    transparent 65%
+  );
+}
+
+/* ----- Slide type classes ----- */
+.df-slide-display-1 {
+  font-family: var(--font-sans);
+  font-size: var(--slide-display-1);
+  font-weight: var(--fw-semibold);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  text-wrap: balance;
+}
+.df-slide-display-2 {
+  font-family: var(--font-sans);
+  font-size: var(--slide-display-2);
+  font-weight: var(--fw-semibold);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+  text-wrap: balance;
+}
+.df-slide-display-3 {
+  font-family: var(--font-sans);
+  font-size: var(--slide-display-3);
+  font-weight: var(--fw-semibold);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  text-wrap: balance;
+}
+.df-slide-body {
+  font-family: var(--font-sans);
+  font-size: var(--slide-body);
+  font-weight: var(--fw-regular);
+  line-height: 1.5;
+  color: var(--text-primary);
+  text-wrap: pretty;
+}
+.df-slide-caption {
+  font-family: var(--font-sans);
+  font-size: var(--slide-caption);
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+.df-slide-eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--slide-eyebrow);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ----- Stat type (big-number slides) ----- */
+.df-slide-stat {
+  font-family: var(--font-mono);
+  font-size: var(--slide-stat);
+  font-weight: var(--fw-medium);
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum", "zero";
+}
+.df-slide-stat-label {
+  font-family: var(--font-sans);
+  font-size: var(--slide-stat-label);
+  font-weight: var(--fw-regular);
+  line-height: 1.3;
+  color: var(--text-secondary);
+}
+
+/* ----- Slide container helpers -----
+   Apply .df-slide to a 1920×1080 element. The host (deck-stage, an
+   iframe, a preview) is responsible for scaling it to fit the viewport. */
+.df-slide {
+  width: var(--slide-w);
+  height: var(--slide-h);
+  padding: var(--slide-safe);
+  position: relative;
+  background: var(--surface-base);
+  color: var(--text-primary);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.df-slide--glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--slide-glow);
+}
+.df-slide-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--slide-cols), 1fr);
+  column-gap: var(--slide-gutter);
+  height: 100%;
+  width: 100%;
+}

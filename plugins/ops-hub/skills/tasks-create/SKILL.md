@@ -1,59 +1,58 @@
 ---
 name: tasks-create
-description: Use when turning a provided text into tasks in the Ops Hub, e.g. the user says "create tasks for X", "turn this transcript into tasks", "turn this brief into tasks", "add these to-dos for X", "capture actions from this", "/tasks-create", or pastes a call transcript, a dictated or written brief, or notes and wants the action items captured. Works only from the text the user gives it. Writes Tasks rows linked to the client and its project. Not for creating clients or projects (those are /client-create and /project-create), and not for refreshing existing tasks.
+description: Use when turning a brief, SOW, meeting transcript, or notes into Task records in the Ops Hub — the user says "create tasks for X", "turn this into tasks", "tasks-create", "make tasks from this transcript/brief", or when project-write offers to create a project's tasks. Everything actionable becomes a task linked to the client (and the project if there is one).
 ---
 
 # tasks-create
 
-Takes a provided text (a call transcript, a dictated or written brief, or pasted notes) and creates Tasks rows in the hub, each linked to the right client and, where one applies, its project; when a project is linked, it also refreshes that project's body Task table to include the new tasks. The input is deliberately broad about the *kind* of text, but the text is always supplied by the user. Unlike `/client-create` and `/client-update`, this skill does NOT scan Gmail, Drive, or other connected sources to find work; it parses only the text it's given.
+Turns given text — a brief, SOW, meeting transcript, or notes — into Task records, each linked to a **client** (and a **project** if there is one), with the standard 5-section body. **Everything actionable becomes a task**; a thing the *client* owes becomes a **chase/confirm task you own**.
 
-It creates tasks for **your side** (your team's actionable work). A commitment the client makes is normally a **project-level dependency**, not a task. The exception: when you need to **chase, request, arrange, or confirm** something from the client (access, details, documents, or data you need), capture that as a your-side task framed as the follow-up action, so the user remembers to chase it. Purely client-owned items that need no action from you stay as project-level dependencies.
+**REQUIRED:** read `${CLAUDE_PLUGIN_ROOT}/_shared/hub-conventions.md` first. Loading the hub, find-by-role, address-by-meaning, and confirm-before-write all live there; this skill assumes them.
 
-**Core principle:** extract the genuinely actionable items from the supplied text, link them correctly, preview, and write only on approval. Capture what's there; never pad the list with invented tasks.
+## Before you start — apply learned directives
 
-## Before you start
-
-Run shared startup first: read and follow `_shared/shared-startup.md` (in the plugin root, alongside `skills/`). It locates the hub, reads Hub Config, live-introspects the Tasks DB (its Status options, the Client and Project relations, and any Confidentiality / Assignee / Due Date fields), and loads this skill's Skill Notes directives. Apply those directives as authoritative overrides.
+If `memory.md` exists in this skill's folder, read it first and treat each entry as an authoritative override/addition to the steps below. Those entries are improvements approved from past runs.
 
 ## Inputs
 
-- The **text** to work from, supplied by the user: a call transcript, a dictated or written brief, or pasted notes. This skill does not gather from Gmail, Drive, or other sources; it parses only this text.
-- The **client** the tasks relate to (named, or inferable from the text). Every task links to a client. Resolving the client by name against the Clients DB is fine; that is hub lookup, not source-scanning.
-- Optionally the **project** the tasks belong to. If not given, resolve the client's obvious active project or ask; a task with no project is allowed (a general client task).
+- **The text** — brief, SOW, meeting transcript, or notes.
+- **The client** — name or page; **required** (every task links to a client).
+- **The project** — name or page; **optional** (link it when there is one; a client-level task may have none).
 
-## Process
-
-1. **Shared startup.** As above. You now hold the live Tasks schema (Status options, relations, optional fields) matched to their descriptions.
-2. **Resolve the client and project.** Search Clients by name (ask if ambiguous; if none, offer `/client-create` or confirm proceeding without). For the project: use the one named, else look at the client's projects and propose the obvious active one, else leave the task project-less.
-3. **Extract your-side tasks.** Read the text and pull out the discrete, actionable items **your team owns**. Each becomes a concise, action-first Title plus whatever the text gives (a due date, a status hint). Merge duplicates; drop non-actions (FYI, chit-chat). **Client-side commitments are normally not tasks** — collect them as dependencies for the project level (see step 5). **But** if you need to chase, request, arrange, or confirm something from the client (access, details, documents, or data you need), capture that as a your-side task framed as the follow-up action, so it isn't forgotten. Do not invent tasks the text doesn't support.
-4. **Map each task** to the live Tasks schema: Title; Status defaults to the hub's first not-started option (introspected, do not assume a literal name); the Client relation; the Project relation when resolved; Due Date if the text gives one; Assignee set to the owning **workspace member** when identifiable (Assignee only accepts workspace members, so leave it blank otherwise); the Confidentiality flag if such a field exists and the content is sensitive. A select value that isn't a valid option gets remapped per the shared-startup writing convention.
-5. **Preview.** List the proposed your-side tasks (Title, status, project, due, assignee) in chat. **Separately**, list any client-side dependencies the text surfaced, noted for capture at the project level (this skill does not create them as tasks). If a project is linked, note that its body Task table will be refreshed to include these. Write nothing yet.
-6. **On approval, create the rows** (`notion-create-pages` into the Tasks data source), setting the Client and Project relations to the resolved pages. **If the tasks are linked to a project, also refresh that project's body Task table** to include them (render it from the project's linked Tasks per `_shared/project-body.md`). Revise and re-preview on request; do not write until approved.
-7. **Confirm** with a count and the new rows.
+When invoked by `project-write`, the text + project + client are passed in.
 
 ## Hard rules
 
-- **Resolve everything live via shared startup. Never hardcode Notion IDs.**
-- **Preview before any write; write only on explicit approval.**
-- **Only capture genuinely actionable items from the input. Never invent tasks** to fill the list.
-- **Link every task to a client** (and to a project when one applies) so it rolls up correctly.
-- **Status defaults to the hub's first not-started option** (introspect; don't assume a literal name).
-- **Set Confidentiality when the content is sensitive, and refuse to write employee-level data into the hub.** The hub holds business work items, not employee-level data; that lives in the client's own systems.
-- **`<table>` tags, never pipe tables**, in any task body content.
+- **Everything actionable becomes a task.** A thing the client owes (access, sign-off, content) becomes a **chase/confirm task you own**, not a task assigned to them.
+- **Link the client (required); link the project if there is one (optional).** Never invent a project link.
+- **Defaults on creation:** status = the backlog-equivalent option (find the Status field by meaning, read its options live); assignee = you; effort and due date **only if the text states them**.
+- **Every task gets the body the config lists for tasks** (default 5 sections: User story · Background · Task description · Definition of done · Useful context). Sparse is fine — write "(none — routine X)" rather than inventing.
+- **Confirm before writing** — preview the whole task list; create only on approval.
+- **Status is always the backlog default on creation** — never anything else.
+
+## Process
+
+1. **Load the hub** (per hub-conventions).
+2. **Resolve the client** (required; fuzzy-match) and the **project** (optional). If invoked by `project-write`, both are passed.
+3. **Derive the task list** from the text — everything actionable; client-owed items become chase tasks you own; for a project SOW, include the standard bracket tasks and one section's worth per deliverable. See `references/task-derivation.md`.
+4. **Compose each task** — name, status = backlog default, assignee = you, effort/due if stated, plus the 5-section body.
+5. **Preview** (confirm-before-write) — the task list with names, effort/due, and the client/project links. Offer accept-all or pick.
+6. **Create on approval** — one create per task. Halt on first failure; report what was created and what failed.
+7. **Confirm** — count created, and link the task view filtered to this project/client.
 
 ## What this does NOT do
 
-- Create clients or projects (that is `/client-create`, `/project-create`).
-- Create tasks for purely client-owned commitments that need no action from you. Those are captured as **dependencies at the project level** (the project body, via `/project-create` / `/project-update`). A client item you must chase, request, or arrange IS captured, as a your-side follow-up task.
-- Scan Gmail, Drive, or other connected sources to find tasks. It works only from the provided text (source-gathering is `/client-create` and `/client-update`'s pattern, not this skill's).
-- Update or refresh existing tasks (this creates new rows only).
-- Refresh the rest of the project body or its status narrative (that is `/project-update`). It updates only the project's Task table to include the new tasks.
+- Create the client or project records (those are `client-write` / `project-write`).
+- Require a project — a client-level task can have none.
+- Set Status to anything but the backlog default on creation.
+- Update existing tasks (it only creates; re-running would duplicate — delete the old ones first if re-running).
+- Compose a project body, or write to any connected service.
 
-## Learning loop (after the tasks are created)
+## Learning loop (after the deliverable is produced)
 
-Reflect silently: did anything this run reveal a repeatable improvement to how this skill works (a better extraction heuristic, a default that tripped, a missing check)? Count only generalisable process tweaks, not facts about this one input.
+Once the work is delivered, reflect silently: did anything this run reveal a concrete, repeatable improvement to how this skill works? Only count generalisable process tweaks, not one-off facts about this specific input.
 
-- Found nothing? Say nothing.
-- Found one or more? Offer: "I noticed N possible improvement(s): [each as a one-line directive]. Save any to the hub's Skill Notes? (pick which, or none)."
+- Found nothing? Say nothing. Do not prompt.
+- Found one or more? Offer them: "I noticed N possible improvement(s): [each as a one-line directive]. Save any to memory? (pick which, or none)"
 
-On approval, write each as a new row in the `🧠 Skill Notes` DB, tagged `tasks-create` (or `global` if it applies to every skill). Never write without approval. Never edit this SKILL.md.
+On approval: read `memory.md` (create from the seed if absent), add the directive as a terse imperative bullet with an optional (why: …), consolidate (merge overlaps, drop superseded, keep under ~12), and write it back. Never write without approval. Never edit `SKILL.md` as part of this loop.

@@ -5,13 +5,13 @@
     "email": "graham@dotfound.co.uk"
   },
   "metadata": {
-    "description": "Ops Hub: a duplicatable Notion operations hub plus the skills that stand it up and run it."
+    "description": "Ops Hub: a duplicatable Notion operations hub plus the skills that shape it to your team and keep it current."
   },
   "plugins": [
     {
       "name": "ops-hub",
       "source": "./plugins/ops-hub",
-      "description": "Sets up and operates a client-centric Notion operations hub (clients, projects, tasks, pipeline, and living client/project context pages). Manifest-driven skills read a Notion-resident semantic store plus live introspection before acting. Includes /hub-configure (the setup conductor) and create/update skill pairs per object."
+      "description": "Set up and operate a client-centric Notion operations hub (clients, projects, tasks, pipeline, and living client/project context pages). A setup web app tailors the hub to your team; skills read a Notion config page plus live schema before acting, and confirm before every write. Includes hub-setup (the structure conductor) and write/update skill pairs per object."
     }
   ]
 }
