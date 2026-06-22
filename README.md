@@ -37,6 +37,23 @@ Every skill reads the config page + live schema before acting, finds structural 
 
 In Claude Code / Cowork: `/plugin`, add this repo as a marketplace (`dotfound/ops-hub`), install `ops-hub`, then reload. Duplicate the Notion template into your workspace, open the setup web app to shape your hub, paste its output into Claude, and run `hub-setup`. From then on, `client-write` / `project-write` / `tasks-create` build records and the `-update` skills keep them current.
 
-## Versioning
+## Staying current
 
-`version` is intentionally omitted from `plugin.json`, so each pushed commit is picked up as the latest. Updates are deliberate: `/plugin marketplace update`.
+`version` is intentionally omitted from `plugin.json`, so every commit pushed to `main` is the latest — there are no release numbers to bump. The catch: Claude Code does **not** auto-update third-party marketplaces by default, so an installed copy can fall behind until it's refreshed.
+
+- **Recommended — turn on auto-update.** In `/plugin` → **Marketplaces** → **ops-hub** → **Enable auto-update**. Claude then refreshes the marketplace and updates the plugin at startup, prompting you to `/reload-plugins` when anything changed.
+- **Refresh by hand anytime:** `/plugin marketplace update ops-hub`.
+- **Teams / managed setups** — pre-register the marketplace *with auto-update on* in a project's `.claude/settings.json` (or managed settings), so everyone stays current without touching the toggle:
+
+  ```json
+  {
+    "extraKnownMarketplaces": {
+      "ops-hub": {
+        "source": { "source": "github", "repo": "dotfound/ops-hub" },
+        "autoUpdate": true
+      }
+    }
+  }
+  ```
+
+Because an auto-updating install pulls whatever is on `main`, keep `main` always shippable — land changes through reviewed merges rather than pushing work-in-progress straight to it.
