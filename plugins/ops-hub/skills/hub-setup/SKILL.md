@@ -23,6 +23,7 @@ If `memory.md` exists in this skill's folder, read it first and treat each entry
 - **Confirm before writing** — schema DDL *and* the config page. Show the full change plan; nothing is applied until approved.
 - **Never drop a field without explicit confirmation.** A drop deletes its data — list drops separately and loudly (`⚠ deletes data`).
 - **Structural fields are off-limits to drop or retype.** You may rename a title's or relation's label; never delete it or change its type (a hub needs its titles + relations — see find-by-role). Refuse any such item.
+- **Database renames are safe and data-preserving.** A `recordRenames` entry renames the Notion **data-source title** (e.g. Clients → Customers) — never drop or recreate a database. Tables are resolved by role, so a rename can't break relations, forms, or other skills, and the config stores no database names (nothing else to update).
 - **Read-only & formula fields are off-limits to drop or retype.** A live formula or read-only field absent from the target is left untouched — never proposed as a drop (the setup app omits them by design).
 - **A drop also deletes the field's form question.** Before previewing drops, read each affected table's views; if a dropped field backs a question in a `form_editor` view, Notion silently removes that question (and re-adding the field later won't restore it). Disclose it in the preview — name the form and whether the question was `required`. Renames are safe; the question stays bound. (In the shipped template only Clients has a form — its *New client form* — but always read views live, since a team can add a form to any table.)
 - **Config and schema move together** — every rename/add/drop is applied to both the Notion schema and the config page in one approved batch, so they never drift.
@@ -35,9 +36,10 @@ If `memory.md` exists in this skill's folder, read it first and treat each entry
    - **No hub in the workspace** (the four tables aren't there) → the team hasn't duplicated the template yet. Point them to the setup app's *Step 1*, or to the [TEMPLATE] Notion Operations Hub directly (`https://app.notion.com/p/381e7b4b333d8132ba08d67bafbdaf3d`) — duplicating it (the top-right duplicate icon) copies all four databases + relations in one go. They duplicate, then re-run.
    - No cache → build it. **Resolve the four tables** (Clients/Projects/Tasks/Pipeline) by their data sources; confirm the mapping with the user, then cache table → collection id.
    - No `⚙️ Hub Config` page (older/hand-built hub) → create it from the shipped defaults (`_shared/config.default.json`) before applying changes. A template-started hub already has it — read it.
-2. **Parse the target shape** — from the paste-in JSON, or by translating the described change. Result per record type: desired `fields` (labels + meanings + types) and `body`, plus a `renames` list (old label → new). The paste-in carries no source locations — seed each record's `sources` from `_shared/config.default.json` when first writing the config page; leave them as-is otherwise. See `references/paste-in-format.md`.
+2. **Parse the target shape** — from the paste-in JSON, or by translating the described change. Result per record type: desired `fields` (labels + meanings + types) and `body`, plus a `renames` list (old label → new) and any `recordRenames` (database-title changes). The paste-in carries no source locations — seed each record's `sources` from `_shared/config.default.json` when first writing the config page; leave them as-is otherwise. See `references/paste-in-format.md`.
 3. **Diff against live** — live schema (from step 1) + current config:
    - **rename** = listed in `renames`;
+   - **database rename** = listed in `recordRenames` (renames the data-source title; safe — tables found by role);
    - **add** = a target field with no live match after renames;
    - **drop** = a live *ordinary, writable* field absent from the target (never a read-only or formula field);
    - **form-bound drop** = any dropped field that backs a question in a `form_editor` view of its table — read the table's views (the connector exposes them), and capture the form name + whether the question is `required`, so the preview can flag it.
@@ -45,14 +47,16 @@ If `memory.md` exists in this skill's folder, read it first and treat each entry
    - **emoji** = any add/rename label with no leading emoji gets a suitable one prepended (carry over the field's existing emoji on a rename; match a same-named field elsewhere; else pick by meaning).
    Never propose dropping or retyping a structural field.
 4. **Preview the change plan** (confirm-before-write), grouped per record type:
+   - **Database:** `RENAME <old> → <new>` — renames the table's Notion title (safe; relations, forms, and skills find it by role).
    - **Schema:** `RENAME old → new`, `ADD label (type)`, `DROP label ⚠ deletes data` — for a form-bound drop, append `· also deletes the "<question>" question from form "<form>"` (mark `required` ones).
    - **Config:** changed meanings, new body order.
    Offer accept-all or pick.
 5. **Apply, on approval:**
-   a. **Schema DDL** via the connector — rename, add, drop (`ALTER`/`ADD`/`RENAME`/`DROP` all supported). Halt on first error; report what applied.
-   b. **Write the config page** — the new JSON, `version` bumped.
-   c. **Refresh the cache** — re-resolve roles + reload config (a field may have moved).
-6. **Confirm** — per record type: fields renamed/added/dropped, new config version, cache refreshed. Point the user at the likely next step (`client-write` / `project-write`).
+   a. **Database renames** — for each `recordRenames` entry, rename the table via the connector by setting the data source's `title` (e.g. `update_data_source` with the new `title`); for a single-source table this also updates the database title the team sees. *Fallback (rare):* if a connector can't, name the rename and ask the user to do it in Notion (one click on the title) — tables are found by role, so nothing depends on the name and order doesn't matter. The cached table→id mapping is unaffected (the id is stable).
+   b. **Schema DDL** via the connector — rename, add, drop (`ALTER`/`ADD`/`RENAME`/`DROP` all supported). Halt on first error; report what applied.
+   c. **Write the config page** — the new JSON, `version` bumped.
+   d. **Refresh the cache** — re-resolve roles + reload config (a field may have moved).
+6. **Confirm** — per record type: database renamed (if any), fields renamed/added/dropped, new config version, cache refreshed. Point the user at the likely next step (`client-write` / `project-write`).
 
 ## What this does NOT do
 
