@@ -7,7 +7,7 @@ Generic by design — one plugin serves any team. All per-team variation (the sh
 ## Three pieces
 
 1. **The Notion template** holds the four databases (Clients, Projects, Tasks, Pipeline), their relations, saved views, a New-client intake form, and a pre-filled **⚙️ Hub Config** page. You duplicate it into your own workspace in one click.
-2. **The setup web app** (`web/`) lets you rename / add / drop fields and say what each one means, then emits a prompt you paste into Claude. No backend and no Notion access — it just builds the prompt. (Hosted separately.)
+2. **The setup web app** lets you rename / add / drop fields and say what each one means, then emits a prompt you paste into Claude. No backend and no Notion access — it just builds the prompt. Hosted on the dotfound artefacts library (not in this repo).
 3. **This plugin** (`plugins/ops-hub/`) is the skills that operate the hub.
 
 ## The skills
@@ -26,7 +26,6 @@ Every skill reads the config page + live schema before acting, finds structural 
 ## Structure
 
     .claude-plugin/marketplace.json      marketplace manifest
-    web/                                 the setup web app (source; hosted separately)
     plugins/ops-hub/
       .claude-plugin/plugin.json         plugin manifest (version omitted — every push is latest)
       _shared/

@@ -15,7 +15,7 @@ If `memory.md` exists in this skill's folder, read it first and treat each entry
 
 ## Inputs
 
-- **The setup app's output** — a paste-in block beginning "Apply this Ops Hub setup", carrying a JSON target shape. The usual path. Format: `references/paste-in-format.md`.
+- **The setup app's output** — a paste-in block beginning "Run the hub-setup skill. Apply this Ops Hub setup", carrying a JSON target shape. The usual path. Format: `references/paste-in-format.md`.
 - **Or a described change** in chat ("rename Status to Stage on clients", "add a Region select to clients", "drop Hourly Rate"). Translate it into the same target shape, then proceed identically.
 
 ## Hard rules
