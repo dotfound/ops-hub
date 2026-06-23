@@ -111,6 +111,10 @@ Commit on approval, preferring the **fewest writes** (one body `replace_content`
 
 A record type's `sources` (from config) are resolved at run time: an exact path is used directly; a relative path against the client's folder; natural language interpreted and the named place searched directly (the skill is an agent — it searches the right place, it doesn't scan broadly). Connected services (email, calendar, files, analytics, invoicing) are used as available.
 
+**Check what's actually connected first.** At the start of a run, see which services and MCP servers are genuinely available (email, calendar, files / Drive, invoicing, analytics, Notion). Use whatever is connected; don't assume every entry in the default `sources` list is live. Flag any named source that isn't connected as a gap in the output rather than silently failing over it.
+
+**Lead with Drive and Email.** For both resolving a record and enriching it, the connected Drive folder and mailbox are the primary signal. Use `notion-search` only to find an existing Notion page by name; don't lean on `notion-query-data-sources` to list or scan a table, since it's gated behind Notion Enterprise / Notion AI and returns 400s otherwise. Linked records are still read straight from the resolved page's relations, which needs no table query.
+
 **Tolerate per-source failure.** A dead token, an empty result, a missing file — render that section with an explicit placeholder and continue. A section with no resolvable source is left placeholdered. Never abort the whole run because one source failed.
 
 ---
