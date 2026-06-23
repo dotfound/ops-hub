@@ -14,7 +14,7 @@
   "records": {
     "client": {
       "fields": {
-        "status": { "label": "📋 Status", "purpose": "Engagement state (select: Prospect / Active / Recently Lapsed / Lapsed / TBC). Drives Engagement Overview." },
+        "status": { "label": "📋 Status", "purpose": "Engagement state (select: Prospect / Active / Recently Lapsed / Lapsed / TBC). Set from the most recent client activity (email, meeting, invoice, or task): Prospect = not yet won; Active = activity within the last 3 months; Recently Lapsed = last activity 3 to 12 months ago; Lapsed = no activity for 12+ months; TBC = unknown. Drives Engagement Overview." },
         "sector": { "label": "🏷️ Sector", "purpose": "Client's industry / sector (select)." },
         "main_contact_name": { "label": "👤 Main Contact Name", "purpose": "Primary contact name; mirrors the ⭐ row of the Contacts body table." },
         "main_contact_email": { "label": "👤 Main Contact Email", "purpose": "Primary contact email." },
