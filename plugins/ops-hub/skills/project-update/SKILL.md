@@ -42,7 +42,7 @@ If `memory.md` exists in this skill's folder, read it first and treat each entry
 ## What this does NOT do
 
 - Rewrite the scope sections, or compose from scratch (that's `project-write`).
-- Create or update tasks (that's `tasks-create`).
+- Create or update tasks (that's `tasks-write`).
 - Write Status — or any property — without explicit approval.
 - Touch Manual Notes, or change schema.
 
