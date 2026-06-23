@@ -1,4 +1,4 @@
-# Learning memory — tasks-create
+# Learning memory — tasks-write
 
 Process directives approved from past runs. Read at the start of every run and applied as
 authoritative overrides/additions to SKILL.md. Keep concise (≤ ~12 entries): merge overlaps,

@@ -1,6 +1,6 @@
 # Ops Hub — shared conventions
 
-The cross-cutting machinery every Ops Hub skill relies on — how a skill learns the hub's shape, finds structural fields by **role**, addresses ordinary fields by **meaning**, confirms before writing, resolves where to enrich, and keeps living records current. Skills **point here** (`${CLAUDE_PLUGIN_ROOT}/_shared/hub-conventions.md`), load it on demand, and carry only the behaviour unique to them — they don't restate it. Fix a convention here once and every skill picks it up next run. The skills: `client-write`, `client-update`, `project-write`, `tasks-create`, `project-update`, `hub-setup`.
+The cross-cutting machinery every Ops Hub skill relies on — how a skill learns the hub's shape, finds structural fields by **role**, addresses ordinary fields by **meaning**, confirms before writing, resolves where to enrich, and keeps living records current. Skills **point here** (`${CLAUDE_PLUGIN_ROOT}/_shared/hub-conventions.md`), load it on demand, and carry only the behaviour unique to them — they don't restate it. Fix a convention here once and every skill picks it up next run. The skills: `client-write`, `client-update`, `project-write`, `tasks-write`, `project-update`, `hub-setup`.
 
 ---
 

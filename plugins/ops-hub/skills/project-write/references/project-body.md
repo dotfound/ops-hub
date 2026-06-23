@@ -6,7 +6,7 @@ How to compose a project record's body from the brief or SOW. Used by **project-
 
 **Voice (the SOW house style).** Plain, declarative, slightly clinical. No marketing language, no hedging, no superlatives. "We" = the team; "you" = the client. Short sentences; lists over prose for anything enumerable. British English, no Oxford comma. Money always `£X,XXX + VAT`. Dates `DD/MM/YYYY`. Durations in working days ("10 working days"), never "a fortnight".
 
-**Conventions (from hub-conventions):** `<table>` XML never pipe tables; headings are exact anchors (keep emoji); the stamp is the first body line; Manual Notes is never composed. The body holds **no tasks** — deliverables become Task records via `tasks-create`, shown through the template's task views.
+**Conventions (from hub-conventions):** `<table>` XML never pipe tables; headings are exact anchors (keep emoji); the stamp is the first body line; Manual Notes is never composed. The body holds **no tasks** — deliverables become Task records via `tasks-write`, shown through the template's task views.
 
 ---
 

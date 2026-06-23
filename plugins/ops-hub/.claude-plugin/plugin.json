@@ -1,6 +1,6 @@
 {
   "name": "ops-hub",
-  "description": "Set up and operate a client-centric Notion operations hub: clients, projects, tasks, and pipeline, with living context pages on each client and project. A setup web app shapes the hub to your team; the skills (hub-setup, client-write/update, project-write/update, tasks-create) read a Notion config page plus live schema introspection before every write, find structural fields by role so they survive renames, and always confirm before changing anything. Not a CRM: a broader operations hub.",
+  "description": "Set up and operate a client-centric Notion operations hub: clients, projects, tasks, and pipeline, with living context pages on each client and project. A setup web app shapes the hub to your team; the skills (hub-setup, client-write/update, project-write/update, tasks-write) read a Notion config page plus live schema introspection before every write, find structural fields by role so they survive renames, and always confirm before changing anything. Not a CRM: a broader operations hub.",
   "author": {
     "name": "dotfound",
     "email": "graham@dotfound.co.uk"
