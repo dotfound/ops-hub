@@ -6,3 +6,8 @@
 # Runtime logs and caches must never live inside skill folders
 *.log
 __pycache__/
+
+# Cloudflare Worker (learning-loop relay)
+worker/node_modules/
+worker/.wrangler/
+worker/.dev.vars
