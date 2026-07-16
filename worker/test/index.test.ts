@@ -78,11 +78,14 @@ describe("worker fetch handler", () => {
 
   it("returns 502 when the GitHub call fails and does not increment the daily cap", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(null, { status: 403 })));
+    const todayKey = `issue-count:${new Date().toISOString().slice(0, 10)}`;
+    const countBefore = await env.DAILY_CAP_KV.get(todayKey);
     const request = makeRequest(validBody);
     const ctx = createExecutionContext();
     const response = await worker.fetch(request, env, ctx);
     await waitOnExecutionContext(ctx);
     expect(response.status).toBe(502);
+    expect(await env.DAILY_CAP_KV.get(todayKey)).toBe(countBefore);
   });
 
   it("returns 502 when the GitHub call throws (network failure)", async () => {

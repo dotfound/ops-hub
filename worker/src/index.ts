@@ -35,6 +35,7 @@ export default {
       return new Response("Rate limited", { status: 429 });
     }
 
+    // Accepted tradeoff: KV read-then-write is not atomic, so this is a soft cap that concurrent requests can slightly overshoot; acceptable at this traffic level.
     const dailyCap = Number(env.DAILY_CAP);
     const cacheKey = todayKey();
     const currentCountRaw = await env.DAILY_CAP_KV.get(cacheKey);
