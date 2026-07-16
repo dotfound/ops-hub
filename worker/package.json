@@ -15,7 +15,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.18.5",
     "@cloudflare/workers-types": "^5.20260716.1",
