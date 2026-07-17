@@ -1,9 +1,9 @@
 ---
-name: tasks-create
-description: Use when turning a brief, SOW, meeting transcript, or notes into Task records in the Ops Hub — the user says "create tasks for X", "turn this into tasks", "tasks-create", "make tasks from this transcript/brief", or when project-write offers to create a project's tasks. Everything actionable becomes a task linked to the client (and the project if there is one).
+name: tasks-write
+description: Use when turning a brief, SOW, meeting transcript, or notes into Task records in the Ops Hub — the user says "create tasks for X", "turn this into tasks", "tasks-write", "make tasks from this transcript/brief", or when project-write offers to create a project's tasks. Everything actionable becomes a task linked to the client (and the project if there is one).
 ---
 
-# tasks-create
+# tasks-write
 
 Turns given text — a brief, SOW, meeting transcript, or notes — into Task records, each linked to a **client** (and a **project** if there is one), with the standard 5-section body. **Everything actionable becomes a task**; a thing the *client* owes becomes a **chase/confirm task you own**.
 
