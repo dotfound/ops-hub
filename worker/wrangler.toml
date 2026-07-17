@@ -8,7 +8,7 @@ DAILY_CAP = "100"
 
 [[kv_namespaces]]
 binding = "DAILY_CAP_KV"
-id = "REPLACE_WITH_REAL_KV_NAMESPACE_ID"
+id = "38ab485f8f47456abd3a6a4e49221b4a"
 
 [[ratelimits]]
 name = "RATE_LIMITER"
