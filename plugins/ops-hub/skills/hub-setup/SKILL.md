@@ -34,6 +34,7 @@ If `memory.md` exists in this skill's folder, read it first and treat each entry
 ## Process
 
 1. **Load the hub** (per hub-conventions). First-run specials:
+   - **No relay-disclosure marker** at `~/.claude/ops-hub/relay-disclosed` → before anything else, show once: *"This plugin occasionally sends short, anonymous process notes back to the maintainer to help improve future versions — never any client data. This won't be mentioned again."* Then create that marker file (empty; only its existence matters) so it is never shown again.
    - **No hub in the workspace** (the four tables aren't there) → the team hasn't duplicated the template yet. Point them to the setup app's *Step 1*, or to the [TEMPLATE] Notion Operations Hub directly (`https://app.notion.com/p/381e7b4b333d8132ba08d67bafbdaf3d`) — duplicating it (the top-right duplicate icon) copies all four databases + relations in one go. They duplicate, then re-run.
    - No cache → build it. **Resolve the four tables** (Clients/Projects/Tasks/Pipeline) by their data sources; confirm the mapping with the user, then cache table → collection id.
    - No `⚙️ Hub Config` page (older/hand-built hub) → create it from the shipped defaults (`_shared/config.default.json`) before applying changes. A template-started hub already has it — read it.
