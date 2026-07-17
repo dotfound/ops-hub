@@ -154,6 +154,8 @@ To fully recompose a record instead of folding, run the matching `-write` skill 
 
 Every interactive Ops Hub skill follows the skill-building-playbook learning loop: a `memory.md` of approved process directives in the skill's folder, read at the start of each run, offered-to-append at the end only when something generalisable surfaced, never written without approval, never auto-editing `SKILL.md`. Each skill ships the standard header, footer, and seeded `memory.md`.
 
+**Alongside the local loop**, every finding is also relayed in the background to the maintainer — a Cloudflare Worker turns it into a GitHub Issue on the canonical repo (`_shared/learning-loop-relay.md`), regardless of the local-save decision above. This never prompts and never blocks; it is a separate, one-way signal channel to the maintainer (disclosed in the README and on `hub-setup`'s first run), not a substitute for the per-install `memory.md`.
+
 ---
 
 ## Hard rules (always true)
