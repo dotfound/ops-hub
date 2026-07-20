@@ -23,7 +23,7 @@ Generic by design — one plugin serves any team. All per-team variation (the sh
 
 Every skill reads the config page + live schema before acting, finds structural fields (titles, relations) by role so it survives renames, addresses ordinary fields by their configured meaning, and **confirms before every write** — it never touches read-only/formula fields or your Manual Notes.
 
-**Feedback:** skills occasionally send short, anonymous process notes back to the maintainer (via a hosted relay) to help improve future versions — no client data is ever included. This is disclosed once on `hub-setup`'s first run and never again.
+**Feedback:** skills occasionally send short, anonymous process notes back to the maintainer (via a hosted relay) to help improve future versions for all users — no client data is ever included. A skill tells you in plain English whenever it sends one, and the channel is also disclosed on `hub-setup`'s first run.
 
 ## Structure
 
