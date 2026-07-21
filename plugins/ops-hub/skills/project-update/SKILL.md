@@ -20,8 +20,8 @@ If `memory.md` exists in this skill's folder, read it first and treat each entry
 
 ## Hard rules
 
-- **Body, plus a *proposed* Status only.** Refresh the progress sections; never write Status (or any other property) silently — present the proposed Status and let the user accept or decline.
-- **Incremental from the stamp.** Read the stamp; fold in only activity since it. **No stamp / no managed body → stop** and tell the user to run `project-write`.
+- **Body, a *proposed* Status, and the automatic stamp.** Refresh the progress sections; never write Status (or any other data property) silently: present the proposed Status and let the user accept or decline. The one property written without approval is the *Last Enriched* date (`config.stamp.field`), set to today at commit.
+- **Incremental from the stamp.** Read the *Last Enriched* property; fold in only activity since it. If it's empty but a legacy `_Last enriched: …_` body line is present, read the date from that line this once. **No stamp (neither property nor legacy line) / no managed body → stop** and tell the user to run `project-write`.
 - **Never rewrite the configured scope sections** — every body section the hub config lists, except the two progress sections. Touch only **Work so far** and **Next steps**.
 - **Preserve Manual Notes** verbatim, and everything else outside the two progress sections.
 - **Tasks display via the template's views** — there's no task table in the body to reconcile; progress is the narrative in the two sections.
@@ -31,19 +31,19 @@ If `memory.md` exists in this skill's folder, read it first and treat each entry
 
 1. **Load the hub** (per hub-conventions).
 2. **Resolve the project**, its linked **Tasks** (via the structural relation), and its **Client**.
-3. **Read the managed body + the stamp.** No stamp → stop: *"No managed record yet — run project-write to build it first."*
+3. **Read the managed body + the stamp.** Read the *Last Enriched* property; if empty, look for a legacy `_Last enriched: …_` first body line. Neither present → stop: *"No managed record yet — run project-write to build it first."*
 4. **Gather progress since the stamp** — the linked tasks' current state and comments, plus any given input.
 5. **Refresh the progress sections** — compose/update **Work so far** (done + in-flight, from task state/comments) and **Next steps** (not-started / blocked / what's next), inserting them immediately above Manual Notes if absent. Leave the scope sections untouched.
 6. **Propose a Status** — read the Status field's options live and pick the best fit from task state (e.g. all tasks done → a "ready/complete" option; work underway → "Active"; nothing started → "Pending"). Present it; never apply silently.
 7. **Preview** (confirm-before-write) — the refreshed progress sections, and the proposed Status as `Status: current → proposed (accept?)`. Offer accept-all or pick (including declining the Status change).
-8. **Commit on approval** — body `replace_content` (progress sections + refreshed stamp); if the Status change was accepted, the one `update_properties`.
+8. **Commit on approval** — body `replace_content` (progress sections; remove a legacy stamp line if present), plus one `update_properties` that sets *Last Enriched* to today (silent) and, if the Status change was accepted, the new Status.
 9. **Confirm** — link the record; note what was folded in and whether Status changed.
 
 ## What this does NOT do
 
 - Rewrite the scope sections, or compose from scratch (that's `project-write`).
 - Create or update tasks (that's `tasks-write`).
-- Write Status — or any property — without explicit approval.
+- Write Status, or any property other than the automatic *Last Enriched* stamp, without explicit approval.
 - Touch Manual Notes, or change schema.
 
 ## Learning loop (after the deliverable is produced)

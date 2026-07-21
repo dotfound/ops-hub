@@ -59,10 +59,10 @@ Human-owned — never composed or edited. client-write **seeds** the default wor
 
 ## For client-update (folding, not rebuilding)
 
-Fold only activity since the stamp into the sections above, preserving prior content:
+Fold only activity since the stamp (the *Last Enriched* property; if it's empty, fall back to a legacy `_Last enriched: …_` body line this once) into the sections above, preserving prior content:
 - **Communications Log** — prepend new interactions; refresh themes only if the recent mix clearly shifted.
 - **Engagement History / Overview** — add newly-completed projects; update the mechanical Overview counts.
 - **Opportunities & Risks** — add newly-surfaced items; don't delete standing ones unless clearly resolved.
 - **Contacts / Tech Stack** — add genuinely new entries; leave the rest.
 
-A section with nothing new is left untouched. Manual Notes is never touched. Re-stamp on commit.
+A section with nothing new is left untouched. Manual Notes is never touched. Re-stamp on commit by setting the *Last Enriched* property to today (silently); if a legacy `_Last enriched: …_` body line is present, remove it.

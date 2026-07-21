@@ -5,7 +5,7 @@ description: Use when topping up an existing client record with just what's happ
 
 # client-update
 
-Folds activity **since the last-enriched stamp** into a client record's configured body sections, without disturbing what's already there. Body only — it never writes properties (`client-write` owns those) and never touches Manual Notes. For a full recompose, run `client-write`.
+Folds activity **since the last-enriched stamp** into a client record's configured body sections, without disturbing what's already there. Body only, plus the automatic *Last Enriched* stamp: it writes no other property (`client-write` owns those) and never touches Manual Notes. For a full recompose, run `client-write`.
 
 **REQUIRED:** read `${CLAUDE_PLUGIN_ROOT}/_shared/hub-conventions.md` first. The stamp, loading the hub, confirm-before-write, and Notion markdown all live there; this skill assumes them.
 
@@ -19,8 +19,8 @@ If `memory.md` exists in this skill's folder, read it first and treat each entry
 
 ## Hard rules
 
-- **Body only.** Never write a property — `client-write` owns those. You may *note* in the preview that a property looks stale; never write it.
-- **Incremental from the stamp.** Read the stamp, fold in only activity since it. **No stamp / no managed body → stop** and tell the user to run `client-write` (full build) — don't compose from scratch.
+- **Body only, plus the stamp.** The only property you write is the *Last Enriched* date (`config.stamp.field`), set to today at commit, silently (never in the preview). Never write any other property — `client-write` owns those. You may *note* in the preview that another property looks stale; never write it.
+- **Incremental from the stamp.** Read the *Last Enriched* property; fold in only activity since it. If it's empty but a legacy `_Last enriched: …_` body line is present, read the date from that line this once. **No stamp (neither property nor legacy line) / no managed body → stop** and tell the user to run `client-write` (full build); don't compose from scratch.
 - **Preserve everything you're not folding into** — prior section content, and Manual Notes verbatim.
 - **Confirm before writing**; re-stamp on commit.
 - **Tolerate per-source failure** — placeholder/skip the affected source, don't abort.
@@ -29,17 +29,17 @@ If `memory.md` exists in this skill's folder, read it first and treat each entry
 
 1. **Load the hub** (per hub-conventions).
 2. **Resolve the client** — same matcher as `client-write` (ID/URL, or fuzzy-match the name and confirm).
-3. **Read the managed body + the stamp.** No stamp found → stop: *"No managed record yet — run client-write to build it first."*
+3. **Read the managed body + the stamp.** Read the *Last Enriched* property; if empty, look for a legacy `_Last enriched: …_` first body line. Neither present → stop: *"No managed record yet — run client-write to build it first."*
 4. **Gather activity since the stamp** — the client's `sources` (from config), windowed to **[stamp date → now]**: newly-completed or changed linked records, new invoices, recent email + calendar, new contacts. Section-by-section sourcing: `${CLAUDE_PLUGIN_ROOT}/skills/client-write/references/client-body.md` (see *For client-update*).
 5. **Fold into the configured sections** — merge new items into the relevant existing sections (new interactions → Communications Log; newly-completed projects → Engagement History + refreshed Overview counts; newly-surfaced items → Opportunities & Risks; genuinely new Contacts/Tech/Analytics). Don't rewrite sections wholesale; leave any section with nothing new untouched.
 6. **Preview** (confirm-before-write) — name the sections being folded into and show the added lines; confirm Manual Notes is untouched. Offer accept-all or pick.
-7. **Commit on approval** — one body `replace_content` with the folded body + refreshed stamp (today).
+7. **Commit on approval** — one body `replace_content` with the folded body (and, if a legacy stamp line was present, with that line removed), plus one `update_properties` setting *Last Enriched* to today (silent; not previewed). If nothing changed in the body, still update the property.
 8. **Confirm** — link the record; note what was folded in.
 
 ## What this does NOT do
 
 - Compose from scratch or fill empty sections (run `client-write`).
-- Write any property — body only.
+- Write any property other than the automatic *Last Enriched* stamp.
 - Touch Manual Notes, or anything outside the sections it folds into.
 - Change schema (that's `hub-setup`) or any other record type.
 
