@@ -4,8 +4,8 @@
   "configPageTitle": "⚙️ Hub Config",
   "cachePath": "~/.claude/ops-hub/hub-cache.json",
   "stamp": {
-    "format": "_Last enriched: {date} · {skill}_",
-    "position": "first line of the managed body, above the first section"
+    "field": "last_enriched",
+    "dateFormat": "YYYY-MM-DD"
   },
   "manualNotes": {
     "heading": "📝 Manual Notes",
@@ -33,7 +33,8 @@
         "signatory_position": { "label": "✍️ Signatory Position", "purpose": "Job title of the contract signatory (stated on contracts)." },
         "invoice_email": { "label": "💰 Invoice Email", "purpose": "Where invoices are sent." },
         "invoice_cc": { "label": "💰 Invoice CC", "purpose": "Anyone to copy on invoice emails." },
-        "invoice_instructions": { "label": "💰 Invoice Instructions", "purpose": "PO numbers / references required by the client's invoicing process." }
+        "invoice_instructions": { "label": "💰 Invoice Instructions", "purpose": "PO numbers / references required by the client's invoicing process." },
+        "last_enriched": { "label": "📅 Last Enriched", "type": "date", "purpose": "When the record was last enriched by a write/update skill. Written automatically by the skill and never shown in the confirm preview; read by client-update to window what's new since. Not hand-edited." }
       },
       "body": [
         { "heading": "👥 Contacts", "purpose": "Who the client's people are: names, roles, emails, with the primary contact starred." },
@@ -59,7 +60,8 @@
         "invoicing_rule": { "label": "🧾 Invoicing Rule", "purpose": "When invoices are raised (select: Specific Date / On Completion / 50/50 / Monthly)." },
         "fee": { "label": "💷 Fee", "purpose": "Fixed fee amount (money); set for fixed-fee projects." },
         "hourly_rate": { "label": "💷 Hourly Rate", "purpose": "Hourly rate (money); set for time-and-materials projects." },
-        "sow_url": { "label": "📄 SOW URL", "purpose": "Link to the signed SOW." }
+        "sow_url": { "label": "📄 SOW URL", "purpose": "Link to the signed SOW." },
+        "last_enriched": { "label": "📅 Last Enriched", "type": "date", "purpose": "When the record was last enriched by a write/update skill. Written automatically by the skill and never shown in the confirm preview; read by project-update to window progress since. Not hand-edited." }
       },
       "body": [
         { "heading": "🧭 Context", "purpose": "What's prompting the work and the boundary of what this project covers." },
