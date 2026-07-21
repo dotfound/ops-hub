@@ -4,7 +4,7 @@ How to compose a client record's body sections from the gathered sources. Used b
 
 **Compose what the config lists.** The body is `config.body` — an ordered list of sections, each a `{ heading, purpose }`, that a team can reshape. This guide covers the **default** sections; for any section not covered here, compose from its configured `purpose` and the available sources, and leave a short italic placeholder if there's no signal. Keep tone factual and short — no marketing language.
 
-**Conventions (from hub-conventions):** tables use `<table>` XML, never pipe tables; headings are exact anchors (keep the emoji); the stamp is the first body line; Manual Notes is never composed. Default look-back is **2 years**.
+**Conventions (from hub-conventions):** tables use `<table>` XML, never pipe tables; headings are exact anchors (keep the emoji); the stamp is the *Last Enriched* date property (not a body line); Manual Notes is never composed. Default look-back is **2 years**.
 
 **Resolving sources:** the client's `sources` (from config) name where to look — linked records (via the structural relations), invoicing, email, calendar, files. Resolve each at run time; tolerate per-source failure (placeholder the affected section, don't abort). Infer the client's email domain from known contact emails; if the only address is a generic provider (gmail/outlook/…), ask the user for the domain.
 

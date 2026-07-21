@@ -27,7 +27,7 @@ If `memory.md` exists in this skill's folder, read it first and treat each entry
 - **Body = the configured sections, in order** — composed from the brief in the SOW house voice (plain, declarative, British English, no marketing). A section with no source gets a short italic placeholder. Detail: `references/project-body.md`.
 - **Manual Notes is sacred** — preserve verbatim on a refresh; seed the default wording on a first build.
 - **Tasks never live in the body** — they display through the template's task views. Offer `tasks-write` instead.
-- **Stamp on write.**
+- **Stamp on write** — set the *Last Enriched* date property (`config.stamp.field`) to today, silently (never previewed); no stamp line in the body.
 
 ## Process
 
@@ -35,9 +35,9 @@ If `memory.md` exists in this skill's folder, read it first and treat each entry
 2. **Resolve the project** (by name; new or existing) and the **Client link** — fuzzy-match the client against `clients.title`; hard-ask if it can't be resolved. An existing managed body/stamp means this is a **refresh**: hold its Manual Notes.
 3. **Read the brief/SOW** — the primary source. If not supplied, look in the client's Admin folder (`project.sources`).
 4. **Set properties** — fill the properties the **hub config** lists for projects (it holds the exact fields + their meanings), by meaning, from what the brief states. Skip read-only/formula. Flag important gaps without blocking.
-5. **Compose the body** — each section the **hub config** lists for projects, in order, to its configured purpose, from the brief; carry Manual Notes through (or seed it); prepend the stamp. The default sections follow the SOW structure — composition detail in `references/project-body.md`.
+5. **Compose the body** — each section the **hub config** lists for projects, in order, to its configured purpose, from the brief; carry Manual Notes through (or seed it); no stamp line in the body (the stamp is the *Last Enriched* property, set at commit). The default sections follow the SOW structure; composition detail in `references/project-body.md`.
 6. **Preview** (confirm-before-write) — changed properties as `label: old → new`, plus the ordered body sections. Offer accept-all or pick.
-7. **Commit on approval** — body `replace_content` (stamp included), then `update_properties`.
+7. **Commit on approval** — body `replace_content`, then `update_properties` (sourced fields + the *Last Enriched* property set to today, the latter silently, not previewed).
 8. **Offer the tasks** — derive a proposed task list from the Deliverables (plus the standard bracket tasks) and offer to run `tasks-write`, passing it the brief + this project + the client. Don't create tasks here.
 9. **Confirm** — link the record; note that progress top-ups run `project-update`.
 
