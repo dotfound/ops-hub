@@ -103,6 +103,8 @@ Rebuild it when it's missing, when the live `config.version` differs, or when a 
 - **Schema side-effects** (hub-setup only) — a field **drop** also strips that field from every view built on it; most consequentially a **form view**, where the bound question silently disappears (Notion can't keep a question with no backing property, and re-adding the field won't restore it). Name each affected form and whether its question was required. Renames are safe — a form question stays bound to its property across a rename.
 - Offer **accept all** or **pick** (drop/edit individual changes before committing).
 
+**The enrichment stamp is the one exception.** The field named by `config.stamp.field` (the *Last Enriched* date) is written automatically on commit and is never shown in this preview. It carries no human decision, so approving it every run would be noise. This is the only silent write; every other property still shows `old → new` and waits for approval.
+
 Commit on approval, preferring the **fewest writes** (one body `replace_content`, one `update_properties`). These limits hold even with approval: never touch read-only or formula fields, or **Manual Notes** (see *Living records*).
 
 ---
@@ -138,10 +140,11 @@ Page bodies use Notion's flavor of Markdown; the page icon and title are set on 
 
 ## Living records: the stamp + Manual Notes
 
-The two `-update` skills fold new information into an existing record **without disturbing what's there**, anchored by one stamp line:
+The two `-update` skills fold new information into an existing record **without disturbing what's there**, anchored by one stamp: the **Last Enriched** date property (the field named by `config.stamp.field`, resolved by meaning like any ordinary field).
 
-- **The stamp** — the first line of the managed body (above the first section), italic: `_Last enriched: YYYY-MM-DD · <skill-name>_`.
-- **`*-write`** composes the whole body and writes the stamp (today). **`*-update`** reads it, folds in only activity since that date, then re-stamps today. No stamp → the record was never built by a `-write` skill: run the matching `-write`. Clients and projects share this logic.
+- **The stamp** — a Notion **Date** property on the record, formatted `config.stamp.dateFormat` (`YYYY-MM-DD`). It shows as a sortable column so staleness is visible in the table. It is written automatically and never appears in the confirm preview (see *Confirm before writing*).
+- **`*-write`** composes the whole body and sets the stamp to today. **`*-update`** reads it, folds in only activity since that date, then re-stamps today. Empty stamp (no value on the property) → the record was never built by a `-write` skill: run the matching `-write`. Clients and projects share this logic.
+- **Transition (existing records).** A record built before the stamp became a property may still carry a legacy first body line `_Last enriched: YYYY-MM-DD · <skill>_` with the property empty. When the property is empty but that line is present, read the date from the line this once, then on commit set the property and remove the legacy line. Once the property is set, the line is gone and the property is authoritative.
 
 **Manual Notes** is the last section of every living-record body (client and project) — human-owned, **never touched by any skill**. Task bodies (the 5-section structure) carry no Manual Notes and no stamp (tasks are create-only). Default wording:
 > *Use this section for any notes you want to preserve through future context refreshes. The update skill will never touch anything below this heading.*
@@ -167,5 +170,5 @@ Every interactive Ops Hub skill follows the skill-building-playbook learning loo
 - **Config is the source of truth** for meanings, body layout, and sources; reshape only via `hub-setup`.
 - **The cache is a speed copy** — never authoritative; rebuild when stale.
 - **`<table>` tags, never pipe tables;** headings are exact anchors.
-- **Stamp on `-write`, fold on `-update`;** no stamp → run `-write`.
+- **Stamp on `-write`, fold on `-update`;** the stamp is the *Last Enriched* date property, written silently (never in the preview); empty stamp → run `-write`.
 - **Tolerate per-source failure** — placeholder the section, don't abort.
