@@ -36,6 +36,8 @@ A `<table>` of completed projects, most recent first: Project · Completed · In
 
 A short bulleted list (5–10 items), inferred from: email-signature footers (CMS, hosting, "powered by"), any files-context note, and recent thread subjects. Keep each bullet short. Thin signal → one italic line: `_inferred from limited signal — add to this list as you learn more_`.
 
+**If the page has a `🔎 Lead research` section** (from `lead-research`, written while the client was a prospect): fold the observed setup into this list in a few short bullets, keeping anything only inferred marked as inferred. Don't copy the section across; the full research is deliberately not kept once the record is built.
+
 ## 💬 Communications Log
 
 Two sub-blocks:
@@ -49,6 +51,8 @@ Two sub-blocks, composed from everything gathered:
 - **### Risks** — 0–3 bullets. A lapsed/at-risk status, a long gap since the last invoice, unanswered recent threads, single-point-of-contact fragility.
 
 Quiet is fine — no signal for a side → `_no clear {opportunities|risks} surfaced from current signal_`.
+
+From a `🔎 Lead research` section, carry across the one or two gaps or opportunities that still look useful. Drop the rest.
 
 ## 📝 Manual Notes
 
