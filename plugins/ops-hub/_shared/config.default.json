@@ -100,7 +100,7 @@
     },
     "pipeline": {
       "fields": {
-        "status": { "label": "📋 Status", "purpose": "Deal stage (select: In Progress / Quoting / Quoted / Won / Lost / Declined / On Hold; open = not Won/Lost/Declined)." },
+        "status": { "label": "📋 Status", "purpose": "Deal stage (select: New / Quoting / Quoted / Won / Lost / Declined / On Hold; open = not Won/Lost/Declined)." },
         "prospect_name": { "label": "🏢 Prospect Name", "purpose": "Free-text prospect / company name (used before a Client record exists)." },
         "estimate": { "label": "💷 Estimate", "purpose": "Quoted value (money)." },
         "weighted_value": { "label": "💷 Weighted Value", "purpose": "Estimate × Probability (formula; READ-ONLY — never write)." },
