@@ -26,7 +26,7 @@ When invoked by `project-write`, the text + project + client are passed in.
 - **Everything actionable becomes a task.** A thing the client owes (access, sign-off, content) becomes a **chase/confirm task you own**, not a task assigned to them.
 - **Link the client (required); link the project if there is one (optional).** Never invent a project link.
 - **Defaults on creation:** status = the backlog-equivalent option (find the Status field by meaning, read its options live); assignee = you; effort and due date **only if the text states them**.
-- **Every task gets the body the config lists for tasks** (default 5 sections: User story · Background · Task description · Definition of done · Useful context). Sparse is fine — write "(none — routine X)" rather than inventing.
+- **Every task gets the body the config lists for tasks** (default 5 sections: User story · Background · Task description · Definition of done · Useful context), each as a `##` heading with steps as `- [ ]` checklist items. Sparse is fine — write "(none — routine X)" rather than inventing.
 - **Confirm before writing** — preview the whole task list; create only on approval.
 - **Status is always the backlog default on creation** — never anything else.
 

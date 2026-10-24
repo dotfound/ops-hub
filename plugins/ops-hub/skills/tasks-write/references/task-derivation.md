@@ -27,7 +27,7 @@ Derive from the brief's timeline if it has one (Kickoff → week 1, deliverables
 
 ## The 5-section body
 
-Each task's page body uses the configured task body sections, with these exact labels:
+Each task's page body uses the configured task body sections, each written as a `##` (H2) heading on its own line with the content underneath (never a bold label or `Label: text` on one line), with these exact labels. Steps go in as `- [ ]` checklist items:
 - **User story** — who wants this and why, one line.
 - **Background** — context the doer needs.
 - **Task description** — what to do (a paragraph, or a short breakdown).
